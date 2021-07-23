@@ -1,0 +1,151 @@
+---
+title: "Extreme Trials"
+author: "Anastasia Bernat | 7/19/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+rm(list=ls())
+setwd("~/Desktop/git_repositories/extreme-flight-trials/")
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Reading Data and Sourcing Scripts
+
+```{r message=FALSE, warning=FALSE}
+source_path = "~/Desktop/git_repositories/SBB-dispersal/avbernat_working_on/Rsrc/"
+
+script_names = c("center_flight_data.R", # Re-centers data 
+                 "clean_flight_data.R", # Loads and cleans data
+                 "unique_flight_data.R")
+
+for (script in script_names) { 
+  path = paste0(source_path, script)
+  source(path) 
+}
+
+data <- read_flight_data("data/all_flight_data-Winter2020.csv")
+data_all <- data[[1]]
+data_tested <- data[[2]]
+```
+
+## Hypothesis and Hypothetical Plots
+
+```{r}
+dT1 = data_tested[data_tested$trial_type == "T1",]
+d = dT1[,c("average_speed", "distance", "sex", "sex_c", "eggs_b",
+           "population", "host_plant", "flew","flew_b", "flight_type", 
+           "mass", "beak", "thorax", "wing", "body", "wing2body")]
+```
+
+```{r}
+temp_treatments = c(12, 20, 28, 36, 44)
+RH_treatments = c(40, 55, 70, 85, 100)
+d$temperature = 0
+d$RH = 0
+
+d$temperature <- sample(temp_treatments, nrow(d), replace = TRUE)
+d$RH <- sample(RH_treatments, nrow(d), replace = TRUE)
+```
+
+For temperature and RH, I predict to see parabolic relationships, where flight capacity (distance, speed, yes/no) at the extremes are greatly limited/stunted while around normal conditions (70 % RH 28 C conditions) flight performance will peak. 
+
+Additionally, I expect bugs from GRT to be more vulnerable to these changes where extremes in RH or temperature will drop their flight performance (yes/no, distance, but not speed) even greater than those from BV.
+
+Finally, I expect virgin female bugs and male bugs to fly similar. If I were to test reproductively active males and females like during the preliminary trials, I would expect that the females would become even less consistent flyers than the males (much less yes's to flying). Possibly to protect eggs, females may also fly for less than the males. Although, I would expect speed to be about the same, since speed differences have not been entirely significant in the data before between sexes (and hosts). 
+
+Test hypotheses down below (all percentage estimates come from *Jiang-Long Guo, et al. 2020.Flight Performance of Mamestra brassicae Under Different Biotic and Abiotic Conditions*):
+
+```{r}
+d[d$temperature == 12,]$distance = d[d$temperature == 12,]$distance * 0.25  # drop by 75%
+d[d$temperature == 20,]$distance = d[d$temperature == 20,]$distance * 0.50  # drop by 50%
+# d[d$temperature == 28,]$distance = d[d$temperature == 28,]$distance # no change
+d[d$temperature == 36,]$distance = d[d$temperature == 36,]$distance * 0.75 # drop by 25%
+d[d$temperature == 44,]$distance = d[d$temperature == 44,]$distance * 0.50  # drop by 50%
+```
+
+```{r}
+d[d$temperature == 12,]$average_speed = d[d$temperature == 12,]$average_speed * 0.66  # drop by 33%
+d[d$temperature == 20,]$average_speed = d[d$temperature == 20,]$average_speed * 0.90  # drop by 10%
+# d[d$temperature == 28,]$average_speed = d[d$temperature == 28,]$average_speed # no change
+d[d$temperature == 36,]$average_speed = d[d$temperature == 36,]$average_speed * 0.90 # drop by 10%
+d[d$temperature == 44,]$average_speed = d[d$temperature == 44,]$average_speed * 0.66  # drop by 33%
+```
+
+```{r}
+d[d$RH == 40,]$distance = d[d$RH == 40,]$distance * 0.25  # drop by 75%
+d[d$RH == 55,]$distance = d[d$RH == 55,]$distance * 0.50  # drop by 50%
+# d[d$RH == 70,]$distance = d[d$RH == 70,]$distance # no change
+d[d$RH == 85,]$distance = d[d$RH == 85,]$distance * 0.75 # drop by 25%
+d[d$RH == 100,]$distance = d[d$RH == 100,]$distance * 0.50  # drop by 50%
+```
+
+```{r}
+d[d$RH == 40,]$average_speed = d[d$RH == 40,]$average_speed * 0.66  # drop by 33%
+d[d$RH == 55,]$average_speed = d[d$RH == 55,]$average_speed * 0.90  # drop by 10%
+# d[d$RH == 70,]$average_speed = d[d$RH == 70,]$average_speed # no change
+d[d$RH == 85,]$average_speed = d[d$RH == 85,]$average_speed * 0.90 # drop by 10%
+d[d$RH == 100,]$average_speed = d[d$RH == 100,]$average_speed * 0.66  # drop by 33%
+```
+
+Where C. corindum = black and K. elegans = red.
+
+```{r echo=FALSE, fig.width=8, fig.height=6}
+par(mfrow=c(2,2))
+plot(d$temperature, d$distance, xlab="Temp (C)", ylab="Distance (m)", 
+     col=as.factor(d$host_plant))
+plot(d$temperature, d$average_speed, xlab="Temp (C)", ylab="Avg Speed (m/s)",
+     col=as.factor(d$host_plant))
+plot(d$RH, d$distance, xlab="RH (%)", ylab="Distance (m)", col=as.factor(d$host_plant))
+plot(d$RH, d$average_speed, xlab="RH (%)", ylab="Avg Speed (m/s)", col=as.factor(d$host_plant))
+```
+
+Now considering for host plant differences (only distance):
+
+```{r}
+d[d$temperature == 12 & d$host_plant == "K. elegans",]$distance = 
+  d[d$temperature == 12 & d$host_plant == "K. elegans",]$distance * 0.80  # drop by additional 20%
+d[d$temperature == 20 & d$host_plant == "K. elegans",]$distance = 
+  d[d$temperature == 20 & d$host_plant == "K. elegans",]$distance * 0.90  # drop by additional 10%
+# temp = 28 no change
+d[d$temperature == 36 & d$host_plant == "K. elegans",]$distance = 
+  d[d$temperature == 36 & d$host_plant == "K. elegans",]$distance * 0.90  # drop by additional 10%
+d[d$temperature == 44 & d$host_plant == "K. elegans",]$distance = 
+  d[d$temperature == 44 & d$host_plant == "K. elegans",]$distance * 0.80  # drop by additional 20%
+```
+
+```{r}
+d[d$RH == 40 & d$host_plant == "K. elegans",]$distance = 
+  d[d$RH == 40 & d$host_plant == "K. elegans",]$distance * 0.80  # drop by additional 20%
+d[d$RH == 55 & d$host_plant == "K. elegans",]$distance = 
+  d[d$RH == 55 & d$host_plant == "K. elegans",]$distance * 0.90  # drop by additional 10%
+#RH = 70 no change
+d[d$RH == 85 & d$host_plant == "K. elegans",]$distance = 
+  d[d$RH == 85 & d$host_plant == "K. elegans",]$distance * 0.90 # drop by additional 10%
+d[d$RH == 100 & d$host_plant == "K. elegans",]$distance = 
+  d[d$RH == 100 & d$host_plant == "K. elegans",]$distance * 0.66  # drop by additional 20%
+```
+
+Where C. corindum = black and K. elegans = red.
+
+```{r echo=FALSE}
+par(mfrow=c(1,2)) # C. corindum = black | K. elegans = red
+plot(d$temperature, d$distance, xlab="Temp (C)", ylab="Distance (m)", col=as.factor(d$host_plant))
+plot(d$RH, d$distance, xlab="RH (%)", ylab="Distance (m)", col=as.factor(d$host_plant))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
