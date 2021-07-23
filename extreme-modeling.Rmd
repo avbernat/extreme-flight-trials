@@ -1,14 +1,16 @@
 ---
-title: "Extreme Trials"
-author: "Anastasia Bernat | 7/19/2021"
+title: "Extreme Trials: avbernat | 7/19/2021"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
 rm(list=ls())
 setwd("~/Desktop/git_repositories/extreme-flight-trials/")
+
+library(rstatix)
+library(ggpubr)
 
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -126,7 +128,7 @@ d[d$RH == 55 & d$host_plant == "K. elegans",]$distance =
 d[d$RH == 85 & d$host_plant == "K. elegans",]$distance = 
   d[d$RH == 85 & d$host_plant == "K. elegans",]$distance * 0.90 # drop by additional 10%
 d[d$RH == 100 & d$host_plant == "K. elegans",]$distance = 
-  d[d$RH == 100 & d$host_plant == "K. elegans",]$distance * 0.66  # drop by additional 20%
+  d[d$RH == 100 & d$host_plant == "K. elegans",]$distance * 0.80  # drop by additional 20%
 ```
 
 Where C. corindum = black and K. elegans = red.
@@ -136,6 +138,34 @@ par(mfrow=c(1,2)) # C. corindum = black | K. elegans = red
 plot(d$temperature, d$distance, xlab="Temp (C)", ylab="Distance (m)", col=as.factor(d$host_plant))
 plot(d$RH, d$distance, xlab="RH (%)", ylab="Distance (m)", col=as.factor(d$host_plant))
 ```
+
+```{r}
+# pwc = "Pairwise Wilcoxon test" between groups
+
+df = d %>% 
+  filter(flew_b == 1) %>% # select only those that flew
+  filter(temperature != 36) %>% # select for temp and RH deviations from normal
+  filter(RH != 70)
+
+pwc <- df %>%
+  dunn_test(distance ~ host_plant, p.adjust.method = "bonferroni") %>%
+  add_xy_position(x = "host_plant")
+res.kruskal <- df %>% kruskal_test(distance ~ host_plant)
+
+ggplot(df, aes(host_plant, distance)) + 
+  geom_violin() +
+    labs(
+    subtitle = get_test_label(res.kruskal, detailed = TRUE), 
+    caption = get_pwc_label(pwc)
+    ) + 
+  theme(legend.position="none") +
+  xlab("Host Plant") +
+  ylab("Distance (m)") +
+  geom_boxplot(width=0.1) +
+  stat_pvalue_manual(pwc, hide.ns = TRUE)
+```
+
+No significant differences. If we see bugs from GRT even more vulnerable then we may see great enough differences.
 
 
 
