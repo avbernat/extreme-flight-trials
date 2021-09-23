@@ -41,9 +41,24 @@ alive_nymphs$date = dates
 unique(alive_nymphs$date)
 hist(alive_nymphs$date, breaks=14, freq=TRUE)
 
+# by pop
 library(ggplot2)
 ggplot(alive_nymphs, aes(x=date, fill=pop)) +
   geom_histogram()
+
+# yes/no wing date
+
+alive_nymphs$adult <- "no"
+alive_nymphs$adult[alive_nymphs$wing_date !=""] = "yes"
+
+ggplot(alive_nymphs, aes(x=date, fill=adult)) +
+  geom_histogram()
+
+# numbers of PK vs KL (pretty even)
+
+paste("PK", nrow(alive_nymphs[alive_nymphs$pop == "PK",]))
+paste("KL", nrow(alive_nymphs[alive_nymphs$pop == "KL",]))
+
 
 # Check how many mothers are left 
 
