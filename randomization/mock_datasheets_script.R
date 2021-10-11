@@ -1,11 +1,12 @@
 ##Visualizing randomized data
 #first setwd
+setwd("~/Documents")
 
 #load data from mock_datasheets in progress
 input_raw <- read.csv("./GitHub/extreme-flight-trials/randomization/mock_datasheets_Option_1.csv", header=T, sep=",", quote="", stringsAsFactors=F)
 
 #Since only 12C is being tested twice through these dates, drop the last date to summarize/visualize evenness by family
-input <- input_raw[input_raw$test_date!="10/20/21",]
+input <- input_raw
 
 ##Are the families being evenly distributed between temperature treatments?
 summary_fam <- aggregate(gen1_ID~MID*test_temp, data=input, FUN=length)
