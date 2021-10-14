@@ -1,0 +1,71 @@
+---
+title: "Randomization"
+author: "Anastasia Bernat"
+date: "10/8/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+dir = "/Users/anastasiabernat/Desktop/git_repositories/extreme-flight-trials/trials/randomization/"
+setwd(dir)
+
+library(dplyr)
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+data = read.csv("data/egg_tube_data-rand.csv")
+
+data = data %>%
+  filter(gen1_ID != "")
+```
+
+```{r}
+data$cohort = ""
+data[data$wing_date == "9.21.21",]$cohort = 1
+data[data$wing_date == "9.22.21",]$cohort = 1
+data[data$wing_date == "9.23.21",]$cohort = 1
+data[data$wing_date == "9.24.21",]$cohort = 1
+
+data[data$wing_date == "9.25.21",]$cohort = 2
+data[data$wing_date == "9.26.21",]$cohort = 2
+data[data$wing_date == "9.27.21",]$cohort = 2
+
+data[data$wing_date == "9.28.21",]$cohort = 3
+data[data$wing_date == "9.29.21",]$cohort = 3
+data[data$wing_date == "9.30.21",]$cohort = 3
+data[data$wing_date == "10.01.21",]$cohort = 3
+
+data[data$wing_date == "10.04.21",]$cohort = 4
+data[data$wing_date == "10.05.21",]$cohort = 4
+data[data$wing_date == "10.06.21",]$cohort = 4
+
+
+data[data$wing_date == "10.07.21",]$cohort = 5
+data[data$wing_date == "10.08.21",]$cohort = 5
+
+tubedata = data %>%
+  filter(cohort != "", death_date =="")
+```
+
+
+```{r}
+write.csv(tubedata, "data/egg_tube_data-randc.csv", row.names=FALSE)
+```
+
+```{r}
+temps = c(12,20,28,36,40)
+sample(temps, 1)
+```
+
+```{r}
+input_raw <- read.csv("data/egg_tube_data-vis.csv", header=T, sep=",", quote="", stringsAsFactors=F)
+input <- input_raw[input_raw$test_date!="10/20/21",]
+
+
+```
+
+
+
+
