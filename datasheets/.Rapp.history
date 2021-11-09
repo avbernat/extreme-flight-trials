@@ -1,0 +1,2135 @@
+aggregate(attempts~c_Femnat*c_Malenat*c_phost, data=subdata, FUN=mean)
+aggregate(attempts~c_Femnat*c_Malenat*c_phost, data=subdata, FUN=function(x) {mean(x)*0.6})
+aggregate(attempts~c_phost, data=subdata, FUN=function(x) {mean(x)*0.6})
+2.6/1.8
+2.16/1.8
+2.5/2.03
+2.5/1.6
+1.7/2.95
+2.25/1.86
+2.59/2.11
+28.2/17.6
+data_rej<-data_all[data_all$attempts!=0,]#
+#
+data_rej$acceptances<-data_rej$attempts-data_rej$rejections#
+#
+data<-data.frame(R1=data_rej$acceptances, R2=data_rej$rejections, A=data_rej$c_nhost, B=data_rej$c_phost, C=data_rej$c_Mnat, X=data_rej$groupID) #again, just make it glms#
+#run AICprobs script#
+setwd("~/Dropbox/My Mac (Meredith’s Macbook Air)/Documents/R/generic models/")#
+source("AICprobabilities.R")#
+source("generic models-binomial R1-R2 3-FF.R")#
+sort(summary$AIC)#
+sort(P, decreasing=TRUE, index.return=TRUE)#
+##top: m16, m17, m10, m13
+rej_model<-glm(cbind(rejections, acceptances)~c_nhost*c_Mnat + c_phost*c_Mnat, family=binomial, data=data_rej)#
+summary(rej_model)#
+#
+###Use these to help interpret interactions in full model. Can subset by pophost or nathost or Mnat.#
+#
+data_sub_C<-data_rej[data_rej$M_nat=="C.corindum",]#
+modelC<-glm(cbind(rejections, acceptances)~c_phost*c_nhost, family=binomial, data=data_sub_C)#
+summary(modelC)#
+#
+data_sub_K<-data_rej[data_rej$M_nat=="K.elegans",]#
+modelK<-glm(cbind(rejections, acceptances)~c_phost*c_nhost, family=binomial, data=data_sub_K)#
+summary(modelK)
+rm(list=ls())#
+#
+setwd("~/Dropbox/Cenzer lab dropbox/Mate choice/2019 mate choice")#
+#
+source("stats/data_organizing/hour_one_attempts.R")#
+#
+library(lme4)#
+#
+#we want: nathost, pophost, Mnat#
+data_all<-load_hour_one_attempts()#
+##Rename nathost to Femnat so you know one is Female and one is Male, because I just reinterpreted everything thinking Mnat was Maternal and I feel very dumb.#
+####################ATTEMPTS#
+###Trying this out with a binomial, assuming the maximum number of possible attempts is 15, 30, or 60 (max(data_all$attempts), or that times 2, or that times 4).#
+data_all$nonattempts<-30-data_all$attempts#
+#data_all<-data_all[!is.na(data_all$thorax),]
+data_rej<-data_all[data_all$attempts!=0,]#
+#
+data_rej$acceptances<-data_rej$attempts-data_rej$rejections
+data<-data.frame(R1=data_rej$acceptances, R2=data_rej$rejections, A=data_rej$c_nhost, B=data_rej$c_phost, C=data_rej$c_Mnat, X=data_rej$groupID) #again, just make it glms#
+#run AICprobs script#
+setwd("~/Dropbox/My Mac (Meredith’s Macbook Air)/Documents/R/generic models/")#
+source("AICprobabilities.R")#
+source("generic models-binomial R1-R2 3-FF.R")#
+sort(summary$AIC)#
+sort(P, decreasing=TRUE, index.return=TRUE)#
+##top: m16, m17, m10, m13
+head(data_rej)
+data<-data.frame(R1=data_rej$acceptances, R2=data_rej$rejections, A=data_rej$c_Femnat, B=data_rej$c_phost, C=data_rej$c_Malenat, X=data_rej$groupID) #again, just make it glms
+#run AICprobs script#
+setwd("~/Dropbox/My Mac (Meredith’s Macbook Air)/Documents/R/generic models/")#
+source("AICprobabilities.R")#
+source("generic models-binomial R1-R2 3-FF.R")#
+sort(summary$AIC)#
+sort(P, decreasing=TRUE, index.return=TRUE)
+rej_model<-glm(cbind(rejections, acceptances)~c_Femnat*c_Malenat + c_phost*c_Malenat, family=binomial, data=data_rej)#
+summary(rej_model)
+data_sub_C<-data_rej[data_rej$M_nat=="C.corindum",]#
+modelC<-glm(cbind(rejections, acceptances)~c_phost*c_nhost, family=binomial, data=data_sub_C)#
+summary(modelC)#
+#
+data_sub_K<-data_rej[data_rej$M_nat=="K.elegans",]#
+modelK<-glm(cbind(rejections, acceptances)~c_phost*c_nhost, family=binomial, data=data_sub_K)#
+summary(modelK)
+modelC<-glm(cbind(rejections, acceptances)~c_phost*c_Femnat, family=binomial, data=data_sub_C)#
+summary(modelC)#
+#
+data_sub_K<-data_rej[data_rej$M_nat=="K.elegans",]#
+modelK<-glm(cbind(rejections, acceptances)~c_phost*c_Femnat, family=binomial, data=data_sub_K)#
+summary(modelK)
+data_sub_C<-data_rej[data_rej$M_nat=="C.corindum",]#
+modelC<-glm(cbind(rejections, acceptances)~c_phost*c_Femnat, family=binomial, data=data_sub_C)#
+summary(modelC)#
+#
+data_sub_K<-data_rej[data_rej$M_nat=="K.elegans",]#
+modelK<-glm(cbind(rejections, acceptances)~c_phost*c_Femnat, family=binomial, data=data_sub_K)#
+summary(modelK)
+data_sub_C<-data_rej[data_rej$pophost=="C.corindum",]#
+modelC<-glm(cbind(rejections, acceptances)~c_Malenat*c_Femnat, family=binomial, data=data_sub_C)#
+summary(modelC)#
+#
+data_sub_K<-data_rej[data_rej$pophost=="K.elegans",]#
+modelK<-glm(cbind(rejections, acceptances)~c_Malenat*c_Femnat, family=binomial, data=data_sub_K)#
+summary(modelK)
+rej_model<-glm(cbind(rejections, acceptances)~c_Femnat*c_Malenat + c_phost*c_Malenat, family=binomial, data=data_rej)#
+summary(rej_model)
+summary<-aggregate(acceptances/attempts~pophost, data=data_rej, FUN=mean)#
+summary
+summary<-aggregate(acceptances/attempts~c_Malenat, data=data_rej, FUN=mean)#
+summary
+summary<-aggregate(acceptances/attempts~c_Malenat, data=data_sub_K, FUN=mean)#
+summary
+rm(list=ls())#
+#
+#stats for male mating behavior#
+setwd("~/Dropbox/Cenzer lab dropbox/Mate choice/2019 mate choice")#
+#
+#load hour_one_attempts data#
+source("stats/data_organizing/hour_one_attempts.R")#
+data_h1<-load_hour_one_attempts()#
+data_h1$acceptances <- data_h1$attempts-data_h1$rejections#
+#
+#load hour_one_attempts data#
+source("stats/data_organizing/repeated_checks_attempts.R")#
+data_rc_all<-load_repeated_checks_attempts()#
+#
+data_rc<-data_rc_all[is.na(data_rc_all$mate_trt),] ##Make sure you exclude cases where they are currently mating!#
+####Make it a three panel figure with firsthour as top panel, firsthour rejections as middle panel, and 48 hours as bottom panel#
+#
+####Plotting pop host on x-axis#
+summary_fm<-aggregate(attempts~Female_nat*M_nat*pophost, data=data_h1, FUN=mean)#
+summary_fm#
+#
+summary_rej<-aggregate(acceptances/attempts~Female_nat*M_nat*pophost, data=data_h1, FUN=mean)#
+summary_rej#
+#
+summary_rc<-aggregate(attempts~Female_nat*M_nat*pophost, FUN=mean, data=data_rc)#
+summary_rc
+summary<-aggregate(acceptances/attempts~c_Malenat, data=data_sub_K, FUN=mean)#
+summary
+rm(list=ls())#
+#
+setwd("~/Dropbox/Cenzer lab dropbox/Mate choice/2019 mate choice")#
+#
+source("stats/data_organizing/hour_one_attempts.R")#
+#
+library(lme4)#
+#
+#we want: nathost, pophost, Mnat#
+data_all<-load_hour_one_attempts()#
+##Rename nathost to Femnat so you know one is Female and one is Male, because I just reinterpreted everything thinking Mnat was Maternal and I feel very dumb.#
+####################ATTEMPTS#
+###Trying this out with a binomial, assuming the maximum number of possible attempts is 15, 30, or 60 (max(data_all$attempts), or that times 2, or that times 4).#
+data_all$nonattempts<-30-data_all$attempts#
+#data_all<-data_all[!is.na(data_all$thorax),]#
+#
+data<-data.frame(R1=data_all$attempts, R2=data_all$nonattempts, A=data_all$c_Femnat, B=data_all$c_phost, C=data_all$c_Malenat)#
+#run AICprobs script#
+setwd("~/Dropbox/My Mac (Meredith’s Macbook Air)/Documents/R/generic models/")#
+source("AICprobabilities.R")#
+source("generic models-binomial R1-R2 3-FF.R")#
+sort(summary$AIC)#
+sort(P, decreasing=TRUE, index.return=TRUE)#
+#max=15: top model, with 99.5% probability is m17#
+#max=30: top model, with 98.9% probability (!!!) is m17#
+#max=60: top model, with 98.6% probability (!!!) is m17#
+#
+model<-glm(cbind(attempts,nonattempts)~c_Femnat*c_phost*c_Malenat, data=data_all, family=binomial)#
+summary(model)#
+#3-way interactions are uninterpretable so let's break this up:#
+#
+data_sub_C<-data[data$B==-1,]#
+modelC<-glm(cbind(R1, R2)~A*C, family=binomial, data=data_sub_C)#
+summary(modelC)#
+#
+data_sub_K<-data[data$B==1,]#
+modelK<-glm(cbind(R1, R2)~A*C, family=binomial, data=data_sub_K)#
+summary(modelK)#
+summary<-aggregate(attempts~c_Femnat, data=data_all, FUN=mean)#
+summary#
+#######################REJECTIONS#
+#First, this is meaningless for a female*male combination where the male never courted. This is a binomial with multiple trials.#
+data_rej<-data_all[data_all$attempts!=0,]#
+#
+data_rej$acceptances<-data_rej$attempts-data_rej$rejections#
+#
+data<-data.frame(R1=data_rej$acceptances, R2=data_rej$rejections, A=data_rej$c_Femnat, B=data_rej$c_phost, C=data_rej$c_Malenat, X=data_rej$groupID) #again, just make it glms#
+#run AICprobs script#
+setwd("~/Dropbox/My Mac (Meredith’s Macbook Air)/Documents/R/generic models/")#
+source("AICprobabilities.R")#
+source("generic models-binomial R1-R2 3-FF.R")#
+sort(summary$AIC)#
+sort(P, decreasing=TRUE, index.return=TRUE)#
+##top: m16, m17, m10, m13#
+anova(m16, m13, test="Chisq") #keeping in A*C improves fit#
+anova(m16, m17, test="Chisq") #3-way interaction does nobody any good#
+anova(m10, m13, test="Chisq") #without A*C, A does not improve fit#
+#
+rej_model<-glm(cbind(rejections, acceptances)~c_Femnat*c_Malenat + c_phost*c_Malenat, family=binomial, data=data_rej)#
+summary(rej_model)#
+#
+###Use these to help interpret interactions in full model. Can subset by pophost or nathost or Mnat.#
+#
+data_sub_C<-data_rej[data_rej$pophost=="C.corindum",]#
+modelC<-glm(cbind(rejections, acceptances)~c_Malenat*c_Femnat, family=binomial, data=data_sub_C)#
+summary(modelC)#
+#
+data_sub_K<-data_rej[data_rej$pophost=="K.elegans",]#
+modelK<-glm(cbind(rejections, acceptances)~c_Malenat*c_Femnat, family=binomial, data=data_sub_K)#
+summary(modelK)#
+#
+summary<-aggregate(acceptances/attempts~c_Malenat, data=data_sub_K, FUN=mean)#
+summary
+0.744/0.687
+head(data_rej)
+data_sub_C<-data_rej[data_rej$Female_nat=="C.corindum",]#
+modelC<-glm(cbind(rejections, acceptances)~c_Malenat*c_phost, family=binomial, data=data_sub_C)#
+summary(modelC)#
+#
+data_sub_K<-data_rej[data_rej$Female_nat=="K.elegans",]#
+modelK<-glm(cbind(rejections, acceptances)~c_Malenat*c_phost, family=binomial, data=data_sub_K)#
+summary(modelK)
+summary<-aggregate(acceptances/attempts~c_Malenat, data=data_sub_C, FUN=mean)#
+summary
+0.804/0.655
+rm(list=ls())#
+#
+#stats for male mating behavior#
+setwd("~/Dropbox/Cenzer lab dropbox/Mate choice/2019 mate choice")#
+#
+#load hour_one_attempts data#
+source("stats/data_organizing/hour_one_attempts.R")#
+data_h1<-load_hour_one_attempts()#
+data_h1$acceptances <- data_h1$attempts-data_h1$rejections#
+#
+#load hour_one_attempts data#
+source("stats/data_organizing/repeated_checks_attempts.R")#
+data_rc_all<-load_repeated_checks_attempts()#
+#
+data_rc<-data_rc_all[is.na(data_rc_all$mate_trt),] ##Make sure you exclude cases where they are currently mating!#
+####Make it a three panel figure with firsthour as top panel, firsthour rejections as middle panel, and 48 hours as bottom panel#
+#
+####Plotting pop host on x-axis#
+summary_fm<-aggregate(attempts~Female_nat*M_nat*pophost, data=data_h1, FUN=mean)#
+summary_fm#
+#
+summary_rej<-aggregate(acceptances/attempts~Female_nat*M_nat*pophost, data=data_h1, FUN=mean)#
+summary_rej#
+#
+summary_rc<-aggregate(attempts~Female_nat*M_nat*pophost, FUN=mean, data=data_rc)#
+summary_rc#
+#
+x_space<-c(0.95,1.3,1.7,2.05)#
+#
+setwd("~/Dropbox/My Mac (Meredith’s Macbook Air)/Documents/publications/mate choice/thirddraft/figs")#
+#
+pdf(file="attempts_plot_3.pdf", width=3.8, height=6.5)#
+par(ps=8)#
+#
+split.screen(rbind(c(0,1,0.68,1), c(0,1,0.38,0.68), c(0,1,0,0.38)))#
+#
+screen(1)#
+par(mai=c(0.1, 0.6, 0.2, 0.1))#
+plot(summary_fm$attempts~rep(x_space, each=2), pch=c(1, 19)[as.factor(summary_fm$F_nat)], ylim=c(0,4.2), xlim=c(0.8,2.2), cex=1, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=2, at=seq(0,4, by=1), labels=rep("", times=5))#
+mtext(text=c("0", "1", "2", "3", "4"), side=2, at=seq(0,4,by=1), line=0.6)#
+#
+title(ylab="Male mating attempts", line=1.8)#
+#
+lines(x=c(1.5,1.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=x_space[1:2],y=c(summary_fm$attempts[1],summary_fm$attempts[3]), lty=2, lwd=1)#
+lines(x=x_space[1:2],y=c(summary_fm$attempts[2],summary_fm$attempts[4]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_fm$attempts[5],summary_fm$attempts[7]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_fm$attempts[6],summary_fm$attempts[8]), lty=2, lwd=1)#
+#
+legend(1.55,1.2, legend=c(expression(paste("Female dev host ", italic("C. corindum"))), expression(paste("Female dev host ", italic("K. elegans")))),  pch=c(1,19), cex=0.8, pt.cex=0.75, y.intersp=1)#
+#
+text(1.15, 4.12, labels=expression(paste("Gene B/G: ", italic("C. corindum"))), cex=1)#
+text(1.85,4.1, labels=expression(paste("Gene B/G: ", italic("K. elegans"))), cex=1)#
+lines(x=c(0.5,2.5), y=c(3.88, 3.88))#
+#
+mtext("A. Mating attempts in hour one", side=3, adj=0, font=2)#
+screen(2)#
+par(mai=c(0.1, 0.6, 0.2, 0.1))#
+plot(summary_rej$acceptances~rep(x_space, each=2), pch=c(1, 19)[as.factor(summary_rej$F_nat)], ylim=c(0,1), xlim=c(0.8,2.2), cex=1, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=2, at=seq(0,1, by=0.5), labels=rep("", times=3))#
+mtext(text=c("0", "0.5", "1"), side=2, at=seq(0,1,by=0.5), line=0.6)#
+#
+title(ylab="Proportion of attempts accepted", line=1.8)#
+#
+lines(x=c(1.5,1.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=x_space[1:2],y=c(summary_rej$acceptances[1],summary_rej$acceptances[3]), lty=2, lwd=1)#
+lines(x=x_space[1:2],y=c(summary_rej$acceptances[2],summary_rej$acceptances[4]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_rej$acceptances[5],summary_rej$acceptances[7]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_rej$acceptances[6],summary_rej$acceptances[8]), lty=2, lwd=1)#
+#
+mtext("B. Female acceptances in hour one", side=3, adj=0, font=2)#
+screen(3)#
+par(mai=c(0.6, 0.6, .2, .1))#
+#
+plot(summary_rc$attempts~rep(x_space, each=2), pch=c(1, 19)[as.factor(summary_rc$F_nat)], ylim=c(0,1), xlim=c(0.8,2.2), cex=0.9, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=x_space, labels=rep("",times=4))#
+mtext(side=1, text=rep(c(expression(italic("C. corindum")), expression(italic("K. elegans"))), times=2), line=c(0.5,0.6,0.5,0.6), at=x_space)#
+#
+axis(side=2, at=seq(0,1, by=0.25), labels=rep("", times=5))#
+mtext(text=c("0", "0.25", "0.50", "0.75", "1"), side=2, at=seq(0,1,by=0.25), line=0.6)#
+#
+title(ylab="Male mating attempts (per 10 min)", line=1.8)#
+title(xlab="Male dev host", line=1.8)#
+#
+lines(x=c(1.5,1.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=x_space[1:2],y=c(summary_rc$attempts[1],summary_rc$attempts[3]), lty=2, lwd=1)#
+lines(x=x_space[1:2],y=c(summary_rc$attempts[2],summary_rc$attempts[4]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_rc$attempts[5],summary_rc$attempts[7]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_rc$attempts[6],summary_rc$attempts[8]), lty=2, lwd=1)#
+mtext("C. Mating attempts over 48 hours", side=3, adj=0, font=2)#
+#
+close.screen(all.screens=TRUE)#
+#
+dev.off()
+rm(list=ls())#
+#
+#stats for male mating behavior#
+setwd("~/Dropbox/Cenzer lab dropbox/Mate choice/2019 mate choice")#
+#
+#load hour_one_attempts data#
+source("stats/data_organizing/hour_one_attempts.R")#
+data_h1<-load_hour_one_attempts()#
+data_h1$acceptances <- data_h1$attempts-data_h1$rejections#
+#
+#load hour_one_attempts data#
+source("stats/data_organizing/repeated_checks_attempts.R")#
+data_rc_all<-load_repeated_checks_attempts()#
+#
+data_rc<-data_rc_all[is.na(data_rc_all$mate_trt),] ##Make sure you exclude cases where they are currently mating!#
+####Make it a three panel figure with firsthour as top panel, firsthour rejections as middle panel, and 48 hours as bottom panel#
+#
+####Plotting pop host on x-axis#
+summary_fm<-aggregate(attempts~Female_nat*M_nat*pophost, data=data_h1, FUN=mean)#
+summary_fm#
+#
+summary_rej<-aggregate(acceptances/attempts~Female_nat*M_nat*pophost, data=data_h1, FUN=mean)#
+summary_rej#
+#
+summary_rc<-aggregate(attempts~Female_nat*M_nat*pophost, FUN=mean, data=data_rc)#
+summary_rc#
+#
+x_space<-c(0.95,1.3,1.7,2.05)#
+#
+setwd("~/Dropbox/My Mac (Meredith’s Macbook Air)/Documents/publications/mate choice/thirddraft/figs")#
+#
+pdf(file="attempts_plot_3.pdf", width=3.8, height=6.5)#
+par(ps=8)#
+#
+split.screen(rbind(c(0,1,0.68,1), c(0,1,0.38,0.68), c(0,1,0,0.38)))#
+#
+screen(1)#
+par(mai=c(0.1, 0.6, 0.2, 0.1))#
+plot(summary_fm$attempts~rep(x_space, each=2), pch=c(1, 19)[as.factor(summary_fm$Female_nat)], ylim=c(0,4.2), xlim=c(0.8,2.2), cex=1, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=2, at=seq(0,4, by=1), labels=rep("", times=5))#
+mtext(text=c("0", "1", "2", "3", "4"), side=2, at=seq(0,4,by=1), line=0.6)#
+#
+title(ylab="Male mating attempts", line=1.8)#
+#
+lines(x=c(1.5,1.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=x_space[1:2],y=c(summary_fm$attempts[1],summary_fm$attempts[3]), lty=2, lwd=1)#
+lines(x=x_space[1:2],y=c(summary_fm$attempts[2],summary_fm$attempts[4]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_fm$attempts[5],summary_fm$attempts[7]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_fm$attempts[6],summary_fm$attempts[8]), lty=2, lwd=1)#
+#
+legend(1.55,1.2, legend=c(expression(paste("Female dev host ", italic("C. corindum"))), expression(paste("Female dev host ", italic("K. elegans")))),  pch=c(1,19), cex=0.8, pt.cex=0.75, y.intersp=1)#
+#
+text(1.15, 4.12, labels=expression(paste("Gene B/G: ", italic("C. corindum"))), cex=1)#
+text(1.85,4.1, labels=expression(paste("Gene B/G: ", italic("K. elegans"))), cex=1)#
+lines(x=c(0.5,2.5), y=c(3.88, 3.88))#
+#
+mtext("A. Mating attempts in hour one", side=3, adj=0, font=2)#
+screen(2)#
+par(mai=c(0.1, 0.6, 0.2, 0.1))#
+plot(summary_rej$acceptances~rep(x_space, each=2), pch=c(1, 19)[as.factor(summary_rej$Female_nat)], ylim=c(0,1), xlim=c(0.8,2.2), cex=1, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=2, at=seq(0,1, by=0.5), labels=rep("", times=3))#
+mtext(text=c("0", "0.5", "1"), side=2, at=seq(0,1,by=0.5), line=0.6)#
+#
+title(ylab="Proportion of attempts accepted", line=1.8)#
+#
+lines(x=c(1.5,1.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=x_space[1:2],y=c(summary_rej$acceptances[1],summary_rej$acceptances[3]), lty=2, lwd=1)#
+lines(x=x_space[1:2],y=c(summary_rej$acceptances[2],summary_rej$acceptances[4]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_rej$acceptances[5],summary_rej$acceptances[7]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_rej$acceptances[6],summary_rej$acceptances[8]), lty=2, lwd=1)#
+#
+mtext("B. Female acceptances in hour one", side=3, adj=0, font=2)#
+screen(3)#
+par(mai=c(0.6, 0.6, .2, .1))#
+#
+plot(summary_rc$attempts~rep(x_space, each=2), pch=c(1, 19)[as.factor(summary_rc$Female_nat)], ylim=c(0,1), xlim=c(0.8,2.2), cex=0.9, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=x_space, labels=rep("",times=4))#
+mtext(side=1, text=rep(c(expression(italic("C. corindum")), expression(italic("K. elegans"))), times=2), line=c(0.5,0.6,0.5,0.6), at=x_space)#
+#
+axis(side=2, at=seq(0,1, by=0.25), labels=rep("", times=5))#
+mtext(text=c("0", "0.25", "0.50", "0.75", "1"), side=2, at=seq(0,1,by=0.25), line=0.6)#
+#
+title(ylab="Male mating attempts (per 10 min)", line=1.8)#
+title(xlab="Male dev host", line=1.8)#
+#
+lines(x=c(1.5,1.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=x_space[1:2],y=c(summary_rc$attempts[1],summary_rc$attempts[3]), lty=2, lwd=1)#
+lines(x=x_space[1:2],y=c(summary_rc$attempts[2],summary_rc$attempts[4]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_rc$attempts[5],summary_rc$attempts[7]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_rc$attempts[6],summary_rc$attempts[8]), lty=2, lwd=1)#
+mtext("C. Mating attempts over 48 hours", side=3, adj=0, font=2)#
+#
+close.screen(all.screens=TRUE)#
+#
+dev.off()
+rm(list=ls())#
+#
+#second draft stats for first mate#
+setwd("~/Dropbox/Cenzer lab Dropbox/Mate choice/2019 mate choice")
+#load functions and metadata#
+source("age calculator.R")#
+#
+#Load and prep metadata#
+#metadata#
+data_raw<-read.csv("labdata_8_29.csv", header=TRUE, sep=",", quote="", stringsAsFactors=FALSE)#
+metadata<-data_raw[data_raw$eclosion.date!="" & data_raw$eclosion.date!="eclosion.date", c(1,2,3,5,9,10)]#
+#
+trial_data_all<-read.csv('assembled data/Gdata/metadata_all.csv', header=TRUE, sep=",", quote="", stringsAsFactors=FALSE)#
+#load and prep first_mate data#
+load_fm<-function(){#
+first_mate_data<-read.csv("assembled data/Gdata/hour_one_all.csv", header=TRUE, sep=",", quote="", stringsAsFactors=FALSE)#
+#
+trial_data<-trial_data_all[which(trial_data_all$groupID%in%first_mate_data$groupID),]
+first_mate<-cbind(first_mate_data, trial_data[,c(3,4,5,8,9)])#
+first_mate$mate<-NA#
+first_mate$mate[first_mate$first_mate==first_mate$C_color]<-0#
+first_mate$mate[first_mate$first_mate==first_mate$K_color]<-1#
+#
+#Exclude G2 for now/later because there was no choice#
+data<-first_mate[first_mate$groupID!="G2",]#
+#
+#adding latitude#
+#using one latitude for each pop, recognizing that NKL has multiple#
+data$latitude<-NA#
+data$latitude[data$pop=="PK"]<-24.96448253#
+data$latitude[data$pop=="KL"]<-25.12809216#
+data$latitude[data$pop=="NKL"]<-25.25647566#
+data$latitude[data$pop=="HS"]<-25.49116232#
+data$latitude[data$pop=="LP"]<-27.29866023#
+data$latitude[data$pop=="LW"]<-27.89664055#
+data$latitude[data$pop=="LB"]<-28.79642221#
+data$latitude[data$pop=="GV"]<-29.66196806#
+#
+data$sym_dist<-abs(data$latitude-25.49116232)
+rm(list=ls())#
+#
+#second draft stats for first mate#
+setwd("~/Dropbox/Cenzer lab Dropbox/Mate choice/2019 mate choice")#
+#
+#load functions and metadata#
+source("age calculator.R")#
+#
+#Load and prep metadata#
+#metadata#
+data_raw<-read.csv("labdata_8_29.csv", header=TRUE, sep=",", quote="", stringsAsFactors=FALSE)#
+metadata<-data_raw[data_raw$eclosion.date!="" & data_raw$eclosion.date!="eclosion.date", c(1,2,3,5,9,10)]#
+#
+trial_data_all<-read.csv('assembled data/Gdata/metadata_all.csv', header=TRUE, sep=",", quote="", stringsAsFactors=FALSE)#
+#load and prep first_mate data#
+load_fm<-function(){#
+first_mate_data<-read.csv("assembled data/Gdata/hour_one_all.csv", header=TRUE, sep=",", quote="", stringsAsFactors=FALSE)#
+#
+trial_data<-trial_data_all[which(trial_data_all$groupID%in%first_mate_data$groupID),]#
+#
+#this is where I'll add female, C_male, and K_male columns to add ages as covariates#
+first_mate<-cbind(first_mate_data, trial_data[,c(3,4,5,8,9)])#
+first_mate$mate<-NA#
+first_mate$mate[first_mate$first_mate==first_mate$C_color]<-0#
+first_mate$mate[first_mate$first_mate==first_mate$K_color]<-1#
+#
+#Exclude G2 for now/later because there was no choice#
+data<-first_mate[first_mate$groupID!="G2",]#
+#
+#adding latitude#
+#using one latitude for each pop, recognizing that NKL has multiple#
+data$latitude<-NA#
+data$latitude[data$pop=="PK"]<-24.96448253#
+data$latitude[data$pop=="KL"]<-25.12809216#
+data$latitude[data$pop=="NKL"]<-25.25647566#
+data$latitude[data$pop=="HS"]<-25.49116232#
+data$latitude[data$pop=="LP"]<-27.29866023#
+data$latitude[data$pop=="LW"]<-27.89664055#
+data$latitude[data$pop=="LB"]<-28.79642221#
+data$latitude[data$pop=="GV"]<-29.66196806#
+#
+data$sym_dist<-abs(data$latitude-25.49116232)#
+#
+#center variables#
+data$c_phost<-1#
+data$c_phost[data$pophost=="C.corindum"]<--1#
+#
+data$c_nhost<-1#
+data$c_nhost[data$nathost=="C.corindum"]<--1#
+#
+data$c_lat<-data$latitude-mean(data$latitude)#
+data#
+}#
+first_mate<-load_fm()#
+#
+#load and prep repeated_checks data#
+load_rc<-function(){#
+	mating_prob_data<-read.csv("assembled data/Gdata/repeated_checks_all.csv", header=TRUE, sep=",", quote="", stringsAsFactors=FALSE)#
+#
+trial_data<-trial_data_all[which(trial_data_all$groupID%in%mating_prob_data$groupID),]#
+#
+mating_prob<-cbind(mating_prob_data, trial_data[sapply(1:nrow(mating_prob_data), function(x){which(trial_data$groupID==mating_prob_data$groupID[x])}),c(2,3,4,5,6,7,8,9)])#
+#calculate female age#
+female_age<-data.frame(female=mating_prob$female, trial_date=mating_prob$trial_date, eclosion.date=NA, age=NA)#
+#add eclosion date#
+for(n in 1:nrow(female_age)){#
+	female_age$eclosion.date[n]<-metadata$eclosion.date[metadata$ID==female_age$female[n]]#
+}#
+female_ages<-calc_age_frame(female_age)#
+#
+mating_prob$f_age<-female_ages$age#
+#
+#for C_males#
+Cmale_age<-data.frame(Cmale=mating_prob$C_male, trial_date=mating_prob$trial_date, eclosion.date=NA, age=NA)#
+#add eclosion date#
+for(n in 1:nrow(Cmale_age)){#
+	Cmale_age$eclosion.date[n]<-metadata$eclosion.date[metadata$ID==Cmale_age$Cmale[n]]#
+}#
+Cmale_ages<-calc_age_frame(Cmale_age)#
+#
+mating_prob$C_age<-Cmale_ages$age#
+#for K_males#
+Kmale_age<-data.frame(Kmale=mating_prob$K_male, trial_date=mating_prob$trial_date, eclosion.date=NA, age=NA)#
+#add eclosion date#
+for(n in 1:nrow(Cmale_age)){#
+	Kmale_age$eclosion.date[n]<-metadata$eclosion.date[metadata$ID==Kmale_age$Kmale[n]]#
+}#
+Kmale_ages<-calc_age_frame(Kmale_age)#
+#
+mating_prob$K_age<-Kmale_ages$age#
+#
+mating_prob$mating<-NA#
+mating_prob$mating[mating_prob$mate=="none"]<-0#
+mating_prob$mating[mating_prob$mate=="teal" | mating_prob$mate=="peach"]<-1#
+mating_prob$mate_trt<-NA#
+mating_prob$mate_trt[mating_prob$mate==mating_prob$C_color]<-0#
+mating_prob$mate_trt[mating_prob$mate==mating_prob$K_color]<-1#
+#
+mating_prob$age_diff<-mating_prob$K_age-mating_prob$C_age#
+#
+#Exclude G2 for now/later because there was no choice#
+data<-mating_prob[mating_prob$groupID!="G2",]#
+#
+#adding latitude#
+#using one latitude for each pop, recognizing that NKL has multiple#
+data$latitude<-NA#
+data$latitude[data$pop=="PK"]<-24.96448253#
+data$latitude[data$pop=="KL"]<-25.12809216#
+data$latitude[data$pop=="NKL"]<-25.25647566#
+data$latitude[data$pop=="HS"]<-25.49116232#
+data$latitude[data$pop=="LP"]<-27.29866023#
+data$latitude[data$pop=="LW"]<-27.89664055#
+data$latitude[data$pop=="LB"]<-28.79642221#
+data$latitude[data$pop=="GV"]<-29.66196806#
+#
+data$sym_dist<-abs(data$latitude-25.49116232)#
+#
+data$time[data$time<8]<-data$time[data$time<8]+12#
+#
+#center variables#
+data$c_phost<-1#
+data$c_phost[data$pophost=="C.corindum"]<--1#
+#
+data$c_nhost<-1#
+data$c_nhost[data$nathost=="C.corindum"]<--1#
+#
+data$c_lat<-data$latitude-mean(data$latitude)#
+#
+data$c_fage<-data$f_age-mean(data$f_age)#
+#
+data#
+}#
+mating_freqs<-load_rc()#
+#
+BVcol<-rgb(1,0,0,0.6)#
+GRTcol<-rgb(0,0.5,1,0.6)
+####Plotting pop host on x-axis#
+summary_fm<-aggregate(mate~nathost*pophost, data=first_mate, FUN=mean)#
+summary_fm#
+#
+summary_rc<-aggregate(mate_trt~nathost*pophost, FUN=mean, data=mating_freqs)#
+summary_rc
+}
+summary_fm
+rm(list=ls())#
+#
+#second draft stats for first mate#
+setwd("~/Dropbox/Cenzer lab Dropbox/Mate choice/2019 mate choice")#
+#
+#load functions and metadata#
+source("age calculator.R")#
+#
+#Load and prep metadata#
+#metadata#
+data_raw<-read.csv("labdata_8_29.csv", header=TRUE, sep=",", quote="", stringsAsFactors=FALSE)#
+metadata<-data_raw[data_raw$eclosion.date!="" & data_raw$eclosion.date!="eclosion.date", c(1,2,3,5,9,10)]#
+#
+trial_data_all<-read.csv('assembled data/Gdata/metadata_all.csv', header=TRUE, sep=",", quote="", stringsAsFactors=FALSE)#
+#load and prep first_mate data#
+load_fm<-function(){#
+first_mate_data<-read.csv("assembled data/Gdata/hour_one_all.csv", header=TRUE, sep=",", quote="", stringsAsFactors=FALSE)#
+#
+trial_data<-trial_data_all[which(trial_data_all$groupID%in%first_mate_data$groupID),]#
+#
+#this is where I'll add female, C_male, and K_male columns to add ages as covariates#
+first_mate<-cbind(first_mate_data, trial_data[,c(3,4,5,8,9)])#
+first_mate$mate<-NA#
+first_mate$mate[first_mate$first_mate==first_mate$C_color]<-0#
+first_mate$mate[first_mate$first_mate==first_mate$K_color]<-1#
+#
+#Exclude G2 for now/later because there was no choice#
+data<-first_mate[first_mate$groupID!="G2",]#
+#
+#adding latitude#
+#using one latitude for each pop, recognizing that NKL has multiple#
+data$latitude<-NA#
+data$latitude[data$pop=="PK"]<-24.96448253#
+data$latitude[data$pop=="KL"]<-25.12809216#
+data$latitude[data$pop=="NKL"]<-25.25647566#
+data$latitude[data$pop=="HS"]<-25.49116232#
+data$latitude[data$pop=="LP"]<-27.29866023#
+data$latitude[data$pop=="LW"]<-27.89664055#
+data$latitude[data$pop=="LB"]<-28.79642221#
+data$latitude[data$pop=="GV"]<-29.66196806#
+#
+data$sym_dist<-abs(data$latitude-25.49116232)#
+#
+#center variables#
+data$c_phost<-1#
+data$c_phost[data$pophost=="C.corindum"]<--1#
+#
+data$c_nhost<-1#
+data$c_nhost[data$nathost=="C.corindum"]<--1#
+#
+data$c_lat<-data$latitude-mean(data$latitude)#
+data#
+}#
+first_mate<-load_fm()#
+#
+#load and prep repeated_checks data#
+load_rc<-function(){#
+	mating_prob_data<-read.csv("assembled data/Gdata/repeated_checks_all.csv", header=TRUE, sep=",", quote="", stringsAsFactors=FALSE)#
+#
+trial_data<-trial_data_all[which(trial_data_all$groupID%in%mating_prob_data$groupID),]#
+#
+mating_prob<-cbind(mating_prob_data, trial_data[sapply(1:nrow(mating_prob_data), function(x){which(trial_data$groupID==mating_prob_data$groupID[x])}),c(2,3,4,5,6,7,8,9)])#
+#calculate female age#
+female_age<-data.frame(female=mating_prob$female, trial_date=mating_prob$trial_date, eclosion.date=NA, age=NA)#
+#add eclosion date#
+for(n in 1:nrow(female_age)){#
+	female_age$eclosion.date[n]<-metadata$eclosion.date[metadata$ID==female_age$female[n]]#
+}#
+female_ages<-calc_age_frame(female_age)#
+#
+mating_prob$f_age<-female_ages$age#
+#
+#for C_males#
+Cmale_age<-data.frame(Cmale=mating_prob$C_male, trial_date=mating_prob$trial_date, eclosion.date=NA, age=NA)#
+#add eclosion date#
+for(n in 1:nrow(Cmale_age)){#
+	Cmale_age$eclosion.date[n]<-metadata$eclosion.date[metadata$ID==Cmale_age$Cmale[n]]#
+}#
+Cmale_ages<-calc_age_frame(Cmale_age)#
+#
+mating_prob$C_age<-Cmale_ages$age#
+#for K_males#
+Kmale_age<-data.frame(Kmale=mating_prob$K_male, trial_date=mating_prob$trial_date, eclosion.date=NA, age=NA)#
+#add eclosion date#
+for(n in 1:nrow(Cmale_age)){#
+	Kmale_age$eclosion.date[n]<-metadata$eclosion.date[metadata$ID==Kmale_age$Kmale[n]]#
+}#
+Kmale_ages<-calc_age_frame(Kmale_age)#
+#
+mating_prob$K_age<-Kmale_ages$age#
+#
+mating_prob$mating<-NA#
+mating_prob$mating[mating_prob$mate=="none"]<-0#
+mating_prob$mating[mating_prob$mate=="teal" | mating_prob$mate=="peach"]<-1#
+mating_prob$mate_trt<-NA#
+mating_prob$mate_trt[mating_prob$mate==mating_prob$C_color]<-0#
+mating_prob$mate_trt[mating_prob$mate==mating_prob$K_color]<-1#
+#
+mating_prob$age_diff<-mating_prob$K_age-mating_prob$C_age#
+#
+#Exclude G2 for now/later because there was no choice#
+data<-mating_prob[mating_prob$groupID!="G2",]#
+#
+#adding latitude#
+#using one latitude for each pop, recognizing that NKL has multiple#
+data$latitude<-NA#
+data$latitude[data$pop=="PK"]<-24.96448253#
+data$latitude[data$pop=="KL"]<-25.12809216#
+data$latitude[data$pop=="NKL"]<-25.25647566#
+data$latitude[data$pop=="HS"]<-25.49116232#
+data$latitude[data$pop=="LP"]<-27.29866023#
+data$latitude[data$pop=="LW"]<-27.89664055#
+data$latitude[data$pop=="LB"]<-28.79642221#
+data$latitude[data$pop=="GV"]<-29.66196806#
+#
+data$sym_dist<-abs(data$latitude-25.49116232)#
+#
+data$time[data$time<8]<-data$time[data$time<8]+12#
+#
+#center variables#
+data$c_phost<-1#
+data$c_phost[data$pophost=="C.corindum"]<--1#
+#
+data$c_nhost<-1#
+data$c_nhost[data$nathost=="C.corindum"]<--1#
+#
+data$c_lat<-data$latitude-mean(data$latitude)#
+#
+data$c_fage<-data$f_age-mean(data$f_age)#
+#
+data#
+}#
+mating_freqs<-load_rc()#
+#
+BVcol<-rgb(1,0,0,0.6)#
+GRTcol<-rgb(0,0.5,1,0.6)
+####Plotting pop host on x-axis#
+summary_fm<-aggregate(mate~nathost*pophost, data=first_mate, FUN=mean)#
+summary_fm#
+#
+summary_rc<-aggregate(mate_trt~nathost*pophost, FUN=mean, data=mating_freqs)#
+summary_rc
+summary_fm<-aggregate(mate~nathost*pophost, data=first_mate, FUN=function(x) {1-mean(x)})#
+summary_fm#
+#
+summary_rc<-aggregate(mate_trt~nathost*pophost, FUN=function(x) {1-mean(x)}, data=mating_freqs)#
+summary_rc
+setwd("~/Documents/publications/mate choice/first draft/figs")#
+#
+pdf(file="mating_plot_2.pdf", width=6, height=3.5)#
+par(ps=8)#
+#
+split.screen(rbind(c(0,0.55, 0,1), c(0.55,1,0,1)))#
+#
+screen(1)#
+par(mai=c(0.6, 0.6, .2, .1))#
+plot(summary_fm$mate~c(1,1,2,2), pch=c(1,19)[as.factor(summary_fm$nathost)], ylim=c(0,1), xlim=c(0.8,2.3), cex=1, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=c(1,2), labels=c("", ""))#
+mtext(side=1, c(expression(italic("C. corindum")), expression(italic("K. elegans"))), at=c(1,2), line=0.6)#
+#
+axis(side=2, at=seq(0,1, by=0.2), labels=rep("", times=6))#
+mtext(text=c("0", "0.2", "0.4", "0.6", "0.8", "1"), side=2, at=seq(0,1,by=0.2), line=0.6)#
+#
+title(ylab=expression(paste("Preference for ", italic("C. corindum"), " treatment male")), line=1.8)#
+title(xlab="Population host", line=1.8)#
+#
+mtext("A. First mate", side=3, adj=0, font=2)#
+#
+#neutral pref line#
+lines(x=c(0.5,2.5), y=c(0.5,0.5), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=c(1,2),y=c(summary_fm$mate[1],summary_fm$mate[3]), lty=2, lwd=1)#
+lines(x=c(1,2),y=c(summary_fm$mate[2],summary_fm$mate[4]), lty=2, lwd=1)#
+#
+legend(.78,1.01, legend=c(expression(paste("Female developed on ", italic("C. corindum"))), expression(paste("Female developed on ", italic("K. elegans")))),  pch=c(1,19), cex=0.85, pt.cex=0.8, y.intersp=1)#
+#
+screen(2)#
+par(mai=c(0.6, .1, .2, .1))#
+#
+plot(summary_rc$mate_trt~c(1,1,2,2), pch=c(1, 19)[as.factor(summary_rc$nathost)], ylim=c(0,1), xlim=c(0.8,2.2), cex=0.9, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=c(1,2), labels=c("", ""))#
+mtext(side=1, text=c(expression(italic("C. corindum")), expression(italic("K. elegans"))), line=0.6, at=c(1,2))#
+#title(ylab="Fraction of time mating with males from GRT", line=2.5)#
+title(xlab="Population host", line=1.8)#
+mtext("B. Mating frequency over 48 hours", side=3, adj=0, font=2)#
+#
+#neutral pref line#
+lines(x=c(0.5,2.5), y=c(0.5,0.5), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=c(1,2),y=c(summary_rc$mate_trt[1],summary_rc$mate_trt[3]), lty=2, lwd=1)#
+lines(x=c(1,2),y=c(summary_rc$mate_trt[2],summary_rc$mate_trt[4]), lty=2, lwd=1)#
+#
+#legend(1.42,1.01, legend=c("Female developed on BV", "Female developed on GRT"), col=c(BVcol, GRTcol), pch=20, cex=0.85, pt.cex=2, y.intersp=1.8)#
+close.screen(all.screens=TRUE)#
+#
+dev.off()
+setwd("~/Dropbox/My Mac (Meredith’s MacBook Air)/Documents/publications/mate choice/first draft/figs")#
+#
+pdf(file="mating_plot_2.pdf", width=6, height=3.5)#
+par(ps=8)#
+#
+split.screen(rbind(c(0,0.55, 0,1), c(0.55,1,0,1)))#
+#
+screen(1)#
+par(mai=c(0.6, 0.6, .2, .1))#
+plot(summary_fm$mate~c(1,1,2,2), pch=c(1,19)[as.factor(summary_fm$nathost)], ylim=c(0,1), xlim=c(0.8,2.3), cex=1, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=c(1,2), labels=c("", ""))#
+mtext(side=1, c(expression(italic("C. corindum")), expression(italic("K. elegans"))), at=c(1,2), line=0.6)#
+#
+axis(side=2, at=seq(0,1, by=0.2), labels=rep("", times=6))#
+mtext(text=c("0", "0.2", "0.4", "0.6", "0.8", "1"), side=2, at=seq(0,1,by=0.2), line=0.6)#
+#
+title(ylab=expression(paste("Preference for ", italic("C. corindum"), " treatment male")), line=1.8)#
+title(xlab="Population host", line=1.8)#
+#
+mtext("A. First mate", side=3, adj=0, font=2)#
+#
+#neutral pref line#
+lines(x=c(0.5,2.5), y=c(0.5,0.5), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=c(1,2),y=c(summary_fm$mate[1],summary_fm$mate[3]), lty=2, lwd=1)#
+lines(x=c(1,2),y=c(summary_fm$mate[2],summary_fm$mate[4]), lty=2, lwd=1)#
+#
+legend(.78,1.01, legend=c(expression(paste("Female developed on ", italic("C. corindum"))), expression(paste("Female developed on ", italic("K. elegans")))),  pch=c(1,19), cex=0.85, pt.cex=0.8, y.intersp=1)#
+#
+screen(2)#
+par(mai=c(0.6, .1, .2, .1))#
+#
+plot(summary_rc$mate_trt~c(1,1,2,2), pch=c(1, 19)[as.factor(summary_rc$nathost)], ylim=c(0,1), xlim=c(0.8,2.2), cex=0.9, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=c(1,2), labels=c("", ""))#
+mtext(side=1, text=c(expression(italic("C. corindum")), expression(italic("K. elegans"))), line=0.6, at=c(1,2))#
+#title(ylab="Fraction of time mating with males from GRT", line=2.5)#
+title(xlab="Population host", line=1.8)#
+mtext("B. Mating frequency over 48 hours", side=3, adj=0, font=2)#
+#
+#neutral pref line#
+lines(x=c(0.5,2.5), y=c(0.5,0.5), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=c(1,2),y=c(summary_rc$mate_trt[1],summary_rc$mate_trt[3]), lty=2, lwd=1)#
+lines(x=c(1,2),y=c(summary_rc$mate_trt[2],summary_rc$mate_trt[4]), lty=2, lwd=1)#
+#
+#legend(1.42,1.01, legend=c("Female developed on BV", "Female developed on GRT"), col=c(BVcol, GRTcol), pch=20, cex=0.85, pt.cex=2, y.intersp=1.8)#
+close.screen(all.screens=TRUE)#
+#
+dev.off()
+setwd("~/Dropbox/My Mac (Meredith’s MacBook Air)/Documents/publications/mate choice/third draft/figs")#
+#
+pdf(file="mating_plot_2.pdf", width=6, height=3.5)#
+par(ps=8)#
+#
+split.screen(rbind(c(0,0.55, 0,1), c(0.55,1,0,1)))#
+#
+screen(1)#
+par(mai=c(0.6, 0.6, .2, .1))#
+plot(summary_fm$mate~c(1,1,2,2), pch=c(1,19)[as.factor(summary_fm$nathost)], ylim=c(0,1), xlim=c(0.8,2.3), cex=1, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=c(1,2), labels=c("", ""))#
+mtext(side=1, c(expression(italic("C. corindum")), expression(italic("K. elegans"))), at=c(1,2), line=0.6)#
+#
+axis(side=2, at=seq(0,1, by=0.2), labels=rep("", times=6))#
+mtext(text=c("0", "0.2", "0.4", "0.6", "0.8", "1"), side=2, at=seq(0,1,by=0.2), line=0.6)#
+#
+title(ylab=expression(paste("Preference for ", italic("C. corindum"), " treatment male")), line=1.8)#
+title(xlab="Population host", line=1.8)#
+#
+mtext("A. First mate", side=3, adj=0, font=2)#
+#
+#neutral pref line#
+lines(x=c(0.5,2.5), y=c(0.5,0.5), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=c(1,2),y=c(summary_fm$mate[1],summary_fm$mate[3]), lty=2, lwd=1)#
+lines(x=c(1,2),y=c(summary_fm$mate[2],summary_fm$mate[4]), lty=2, lwd=1)#
+#
+legend(.78,1.01, legend=c(expression(paste("Female developed on ", italic("C. corindum"))), expression(paste("Female developed on ", italic("K. elegans")))),  pch=c(1,19), cex=0.85, pt.cex=0.8, y.intersp=1)#
+#
+screen(2)#
+par(mai=c(0.6, .1, .2, .1))#
+#
+plot(summary_rc$mate_trt~c(1,1,2,2), pch=c(1, 19)[as.factor(summary_rc$nathost)], ylim=c(0,1), xlim=c(0.8,2.2), cex=0.9, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=c(1,2), labels=c("", ""))#
+mtext(side=1, text=c(expression(italic("C. corindum")), expression(italic("K. elegans"))), line=0.6, at=c(1,2))#
+#title(ylab="Fraction of time mating with males from GRT", line=2.5)#
+title(xlab="Population host", line=1.8)#
+mtext("B. Mating frequency over 48 hours", side=3, adj=0, font=2)#
+#
+#neutral pref line#
+lines(x=c(0.5,2.5), y=c(0.5,0.5), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=c(1,2),y=c(summary_rc$mate_trt[1],summary_rc$mate_trt[3]), lty=2, lwd=1)#
+lines(x=c(1,2),y=c(summary_rc$mate_trt[2],summary_rc$mate_trt[4]), lty=2, lwd=1)#
+#
+#legend(1.42,1.01, legend=c("Female developed on BV", "Female developed on GRT"), col=c(BVcol, GRTcol), pch=20, cex=0.85, pt.cex=2, y.intersp=1.8)#
+close.screen(all.screens=TRUE)#
+#
+dev.off()
+setwd("~/Dropbox/My Mac (Meredith’s MacBook Air)/Documents/publications/mate choice/thirddraft/figs")#
+#
+pdf(file="mating_plot_2.pdf", width=6, height=3.5)#
+par(ps=8)#
+#
+split.screen(rbind(c(0,0.55, 0,1), c(0.55,1,0,1)))#
+#
+screen(1)#
+par(mai=c(0.6, 0.6, .2, .1))#
+plot(summary_fm$mate~c(1,1,2,2), pch=c(1,19)[as.factor(summary_fm$nathost)], ylim=c(0,1), xlim=c(0.8,2.3), cex=1, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=c(1,2), labels=c("", ""))#
+mtext(side=1, c(expression(italic("C. corindum")), expression(italic("K. elegans"))), at=c(1,2), line=0.6)#
+#
+axis(side=2, at=seq(0,1, by=0.2), labels=rep("", times=6))#
+mtext(text=c("0", "0.2", "0.4", "0.6", "0.8", "1"), side=2, at=seq(0,1,by=0.2), line=0.6)#
+#
+title(ylab=expression(paste("Preference for ", italic("C. corindum"), " treatment male")), line=1.8)#
+title(xlab="Population host", line=1.8)#
+#
+mtext("A. First mate", side=3, adj=0, font=2)#
+#
+#neutral pref line#
+lines(x=c(0.5,2.5), y=c(0.5,0.5), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=c(1,2),y=c(summary_fm$mate[1],summary_fm$mate[3]), lty=2, lwd=1)#
+lines(x=c(1,2),y=c(summary_fm$mate[2],summary_fm$mate[4]), lty=2, lwd=1)#
+#
+legend(.78,1.01, legend=c(expression(paste("Female developed on ", italic("C. corindum"))), expression(paste("Female developed on ", italic("K. elegans")))),  pch=c(1,19), cex=0.85, pt.cex=0.8, y.intersp=1)#
+#
+screen(2)#
+par(mai=c(0.6, .1, .2, .1))#
+#
+plot(summary_rc$mate_trt~c(1,1,2,2), pch=c(1, 19)[as.factor(summary_rc$nathost)], ylim=c(0,1), xlim=c(0.8,2.2), cex=0.9, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=c(1,2), labels=c("", ""))#
+mtext(side=1, text=c(expression(italic("C. corindum")), expression(italic("K. elegans"))), line=0.6, at=c(1,2))#
+#title(ylab="Fraction of time mating with males from GRT", line=2.5)#
+title(xlab="Population host", line=1.8)#
+mtext("B. Mating frequency over 48 hours", side=3, adj=0, font=2)#
+#
+#neutral pref line#
+lines(x=c(0.5,2.5), y=c(0.5,0.5), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=c(1,2),y=c(summary_rc$mate_trt[1],summary_rc$mate_trt[3]), lty=2, lwd=1)#
+lines(x=c(1,2),y=c(summary_rc$mate_trt[2],summary_rc$mate_trt[4]), lty=2, lwd=1)#
+#
+#legend(1.42,1.01, legend=c("Female developed on BV", "Female developed on GRT"), col=c(BVcol, GRTcol), pch=20, cex=0.85, pt.cex=2, y.intersp=1.8)#
+close.screen(all.screens=TRUE)#
+#
+dev.off()
+setwd("~/Dropbox/My Mac (Meredith’s MacBook Air)/Documents/publications/mate choice/thirddraft/figs")#
+#
+pdf(file="mating_plot_2.pdf", width=6, height=3.5)#
+par(ps=8)#
+#
+split.screen(rbind(c(0,0.55, 0,1), c(0.55,1,0,1)))#
+#
+screen(1)#
+par(mai=c(0.6, 0.6, .2, .1))#
+plot(summary_fm$mate~c(1,1,2,2), pch=c(1,19)[as.factor(summary_fm$nathost)], ylim=c(0,1), xlim=c(0.8,2.3), cex=1, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=c(1,2), labels=c("", ""))#
+mtext(side=1, c(expression(italic("C. corindum")), expression(italic("K. elegans"))), at=c(1,2), line=0.6)#
+#
+axis(side=2, at=seq(0,1, by=0.2), labels=rep("", times=6))#
+mtext(text=c("0", "0.2", "0.4", "0.6", "0.8", "1"), side=2, at=seq(0,1,by=0.2), line=0.6)#
+#
+title(ylab=expression(paste("Preference for ", italic("C. corindum"), " treatment male")), line=1.8)#
+title(xlab="Population host", line=1.8)#
+#
+mtext("A. First mate", side=3, adj=0, font=2)#
+#
+#neutral pref line#
+lines(x=c(0.5,2.5), y=c(0.5,0.5), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=c(1,2),y=c(summary_fm$mate[1],summary_fm$mate[3]), lty=2, lwd=1)#
+lines(x=c(1,2),y=c(summary_fm$mate[2],summary_fm$mate[4]), lty=2, lwd=1)#
+#
+legend(0,1.01, legend=c(expression(paste("Female developed on ", italic("C. corindum"))), expression(paste("Female developed on ", italic("K. elegans")))),  pch=c(1,19), cex=0.85, pt.cex=0.8, y.intersp=1)#
+#
+screen(2)#
+par(mai=c(0.6, .1, .2, .1))#
+#
+plot(summary_rc$mate_trt~c(1,1,2,2), pch=c(1, 19)[as.factor(summary_rc$nathost)], ylim=c(0,1), xlim=c(0.8,2.2), cex=0.9, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=c(1,2), labels=c("", ""))#
+mtext(side=1, text=c(expression(italic("C. corindum")), expression(italic("K. elegans"))), line=0.6, at=c(1,2))#
+#title(ylab="Fraction of time mating with males from GRT", line=2.5)#
+title(xlab="Population host", line=1.8)#
+mtext("B. Mating frequency over 48 hours", side=3, adj=0, font=2)#
+#
+#neutral pref line#
+lines(x=c(0.5,2.5), y=c(0.5,0.5), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=c(1,2),y=c(summary_rc$mate_trt[1],summary_rc$mate_trt[3]), lty=2, lwd=1)#
+lines(x=c(1,2),y=c(summary_rc$mate_trt[2],summary_rc$mate_trt[4]), lty=2, lwd=1)#
+#
+#legend(1.42,1.01, legend=c("Female developed on BV", "Female developed on GRT"), col=c(BVcol, GRTcol), pch=20, cex=0.85, pt.cex=2, y.intersp=1.8)#
+close.screen(all.screens=TRUE)#
+#
+dev.off()
+setwd("~/Dropbox/My Mac (Meredith’s MacBook Air)/Documents/publications/mate choice/thirddraft/figs")#
+#
+pdf(file="mating_plot_2.pdf", width=6, height=3.5)#
+par(ps=8)#
+#
+split.screen(rbind(c(0,0.55, 0,1), c(0.55,1,0,1)))#
+#
+screen(1)#
+par(mai=c(0.6, 0.6, .2, .1))#
+plot(summary_fm$mate~c(1,1,2,2), pch=c(1,19)[as.factor(summary_fm$nathost)], ylim=c(0,1), xlim=c(0.8,2.3), cex=1, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=c(1,2), labels=c("", ""))#
+mtext(side=1, c(expression(italic("C. corindum")), expression(italic("K. elegans"))), at=c(1,2), line=0.6)#
+#
+axis(side=2, at=seq(0,1, by=0.2), labels=rep("", times=6))#
+mtext(text=c("0", "0.2", "0.4", "0.6", "0.8", "1"), side=2, at=seq(0,1,by=0.2), line=0.6)#
+#
+title(ylab=expression(paste("Preference for ", italic("C. corindum"), " treatment male")), line=1.8)#
+title(xlab="Population host", line=1.8)#
+#
+mtext("A. First mate", side=3, adj=0, font=2)#
+#
+#neutral pref line#
+lines(x=c(0.5,2.5), y=c(0.5,0.5), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=c(1,2),y=c(summary_fm$mate[1],summary_fm$mate[3]), lty=2, lwd=1)#
+lines(x=c(1,2),y=c(summary_fm$mate[2],summary_fm$mate[4]), lty=2, lwd=1)#
+#
+legend(0.78,0.21, legend=c(expression(paste("Female developed on ", italic("C. corindum"))), expression(paste("Female developed on ", italic("K. elegans")))),  pch=c(1,19), cex=0.85, pt.cex=0.8, y.intersp=1)#
+#
+screen(2)#
+par(mai=c(0.6, .1, .2, .1))#
+#
+plot(summary_rc$mate_trt~c(1,1,2,2), pch=c(1, 19)[as.factor(summary_rc$nathost)], ylim=c(0,1), xlim=c(0.8,2.2), cex=0.9, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=c(1,2), labels=c("", ""))#
+mtext(side=1, text=c(expression(italic("C. corindum")), expression(italic("K. elegans"))), line=0.6, at=c(1,2))#
+#title(ylab="Fraction of time mating with males from GRT", line=2.5)#
+title(xlab="Population host", line=1.8)#
+mtext("B. Mating frequency over 48 hours", side=3, adj=0, font=2)#
+#
+#neutral pref line#
+lines(x=c(0.5,2.5), y=c(0.5,0.5), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=c(1,2),y=c(summary_rc$mate_trt[1],summary_rc$mate_trt[3]), lty=2, lwd=1)#
+lines(x=c(1,2),y=c(summary_rc$mate_trt[2],summary_rc$mate_trt[4]), lty=2, lwd=1)#
+#
+#legend(1.42,1.01, legend=c("Female developed on BV", "Female developed on GRT"), col=c(BVcol, GRTcol), pch=20, cex=0.85, pt.cex=2, y.intersp=1.8)#
+close.screen(all.screens=TRUE)#
+#
+dev.off()
+setwd("~/Dropbox/My Mac (Meredith’s MacBook Air)/Documents/publications/mate choice/thirddraft/figs")#
+#
+pdf(file="mating_plot_2.pdf", width=6, height=3.5)#
+par(ps=8)#
+#
+split.screen(rbind(c(0,0.55, 0,1), c(0.55,1,0,1)))#
+#
+screen(1)#
+par(mai=c(0.6, 0.6, .2, .1))#
+plot(summary_fm$mate~c(1,1,2,2), pch=c(1,19)[as.factor(summary_fm$nathost)], ylim=c(0,1), xlim=c(0.8,2.3), cex=1, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=c(1,2), labels=c("", ""))#
+mtext(side=1, c(expression(italic("C. corindum")), expression(italic("K. elegans"))), at=c(1,2), line=0.6)#
+#
+axis(side=2, at=seq(0,1, by=0.2), labels=rep("", times=6))#
+mtext(text=c("0", "0.2", "0.4", "0.6", "0.8", "1"), side=2, at=seq(0,1,by=0.2), line=0.6)#
+#
+title(ylab=expression(paste("Preference for ", italic("C. corindum"), " treatment male")), line=1.8)#
+title(xlab="Population host", line=1.8)#
+#
+mtext("A. First mate", side=3, adj=0, font=2)#
+#
+#neutral pref line#
+lines(x=c(0.5,2.5), y=c(0.5,0.5), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=c(1,2),y=c(summary_fm$mate[1],summary_fm$mate[3]), lty=2, lwd=1)#
+lines(x=c(1,2),y=c(summary_fm$mate[2],summary_fm$mate[4]), lty=2, lwd=1)#
+#
+legend(0.78,0.20, legend=c(expression(paste("Female developed on ", italic("C. corindum"))), expression(paste("Female developed on ", italic("K. elegans")))),  pch=c(1,19), cex=0.85, pt.cex=0.8, y.intersp=1)#
+#
+screen(2)#
+par(mai=c(0.6, .1, .2, .1))#
+#
+plot(summary_rc$mate_trt~c(1,1,2,2), pch=c(1, 19)[as.factor(summary_rc$nathost)], ylim=c(0,1), xlim=c(0.8,2.2), cex=0.9, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=c(1,2), labels=c("", ""))#
+mtext(side=1, text=c(expression(italic("C. corindum")), expression(italic("K. elegans"))), line=0.6, at=c(1,2))#
+#title(ylab="Fraction of time mating with males from GRT", line=2.5)#
+title(xlab="Population host", line=1.8)#
+mtext("B. Mating frequency over 48 hours", side=3, adj=0, font=2)#
+#
+#neutral pref line#
+lines(x=c(0.5,2.5), y=c(0.5,0.5), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=c(1,2),y=c(summary_rc$mate_trt[1],summary_rc$mate_trt[3]), lty=2, lwd=1)#
+lines(x=c(1,2),y=c(summary_rc$mate_trt[2],summary_rc$mate_trt[4]), lty=2, lwd=1)#
+#
+#legend(1.42,1.01, legend=c("Female developed on BV", "Female developed on GRT"), col=c(BVcol, GRTcol), pch=20, cex=0.85, pt.cex=2, y.intersp=1.8)#
+close.screen(all.screens=TRUE)#
+#
+dev.off()
+setwd("~/Dropbox/My Mac (Meredith’s MacBook Air)/Documents/publications/mate choice/thirddraft/figs")#
+#
+pdf(file="mating_plot_2.pdf", width=6, height=3.5)#
+par(ps=8)#
+#
+split.screen(rbind(c(0,0.55, 0,1), c(0.55,1,0,1)))#
+#
+screen(1)#
+par(mai=c(0.6, 0.6, .2, .1))#
+plot(summary_fm$mate~c(1,1,2,2), pch=c(1,19)[as.factor(summary_fm$nathost)], ylim=c(0,1), xlim=c(0.8,2.3), cex=1, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=c(1,2), labels=c("", ""))#
+mtext(side=1, c(expression(italic("C. corindum")), expression(italic("K. elegans"))), at=c(1,2), line=0.6)#
+#
+axis(side=2, at=seq(0,1, by=0.2), labels=rep("", times=6))#
+mtext(text=c("0", "0.2", "0.4", "0.6", "0.8", "1"), side=2, at=seq(0,1,by=0.2), line=0.6)#
+#
+title(ylab=expression(paste("Preference for ", italic("C. corindum"), " treatment male")), line=1.8)#
+title(xlab="Population host", line=1.8)#
+#
+mtext("A. First mate", side=3, adj=0, font=2)#
+#
+#neutral pref line#
+lines(x=c(0.5,2.5), y=c(0.5,0.5), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=c(1,2),y=c(summary_fm$mate[1],summary_fm$mate[3]), lty=2, lwd=1)#
+lines(x=c(1,2),y=c(summary_fm$mate[2],summary_fm$mate[4]), lty=2, lwd=1)#
+#
+legend(0.78,0.19, legend=c(expression(paste("Female developed on ", italic("C. corindum"))), expression(paste("Female developed on ", italic("K. elegans")))),  pch=c(1,19), cex=0.85, pt.cex=0.8, y.intersp=1)#
+#
+screen(2)#
+par(mai=c(0.6, .1, .2, .1))#
+#
+plot(summary_rc$mate_trt~c(1,1,2,2), pch=c(1, 19)[as.factor(summary_rc$nathost)], ylim=c(0,1), xlim=c(0.8,2.2), cex=0.9, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=c(1,2), labels=c("", ""))#
+mtext(side=1, text=c(expression(italic("C. corindum")), expression(italic("K. elegans"))), line=0.6, at=c(1,2))#
+#title(ylab="Fraction of time mating with males from GRT", line=2.5)#
+title(xlab="Population host", line=1.8)#
+mtext("B. Mating frequency over 48 hours", side=3, adj=0, font=2)#
+#
+#neutral pref line#
+lines(x=c(0.5,2.5), y=c(0.5,0.5), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=c(1,2),y=c(summary_rc$mate_trt[1],summary_rc$mate_trt[3]), lty=2, lwd=1)#
+lines(x=c(1,2),y=c(summary_rc$mate_trt[2],summary_rc$mate_trt[4]), lty=2, lwd=1)#
+#
+#legend(1.42,1.01, legend=c("Female developed on BV", "Female developed on GRT"), col=c(BVcol, GRTcol), pch=20, cex=0.85, pt.cex=2, y.intersp=1.8)#
+close.screen(all.screens=TRUE)#
+#
+dev.off()
+rm(list=ls())#
+#
+#stats for male mating behavior#
+setwd("~/Dropbox/Cenzer lab dropbox/Mate choice/2019 mate choice")#
+source("stats/data_organizing/repeated_checks_attempts.R")#
+data_all<-load_repeated_checks_attempts()#
+#
+library(lme4)
+##excluding those in copula#
+tempdata<-data_all[is.na(data_all$mate_trt),] #for analysis without times when the female was in copula#
+#
+#aggregate this#
+subdata<-aggregate(attempts~ID*c_Femnat*c_phost*c_Malenat, data=tempdata, FUN=sum)#
+subdata$nonattempts <- aggregate(attempts~ID*c_Femnat*c_phost*c_Malenat, data=tempdata, FUN=length)$attempts*10#
+#
+data<-data.frame(R1=subdata$attempts, R2=subdata$nonattempts, A=subdata$c_Femnat, B=subdata$c_phost, C=subdata$c_Malenat)#
+#
+#run AICprobs script#
+setwd("~/Dropbox/My Mac (Meredith’s Macbook Air)/Documents/R/generic models/")#
+source("AICprobabilities.R")#
+source("generic models-binomial R1-R2 3-FF.R")#
+sort(summary$AIC)#
+sort(P, decreasing=TRUE, index.return=TRUE)
+model_attempts_subset <- glm(cbind(attempts, nonattempts)~c_phost*c_Malenat, family=binomial, data=subdata)#
+summary(model_attempts_subset)
+summary(model_attempts_subset)$Estimate
+summary(model_attempts_subset)[[1]]
+summary(model_attempts_subset)[[2]]
+summary(model_attempts_subset)[[3]]
+summary(model_attempts_subset)[[4]]
+summary(model_attempts_subset)[[5]]
+summary(model_attempts_subset)[[6]]
+names(summary(model_attempts_subset))
+summary(model_attempts_subset)$coefficients
+summary(model_attempts_subset)$coefficients$Estimate
+summary(model_attempts_subset)$coefficients["Estimate",]
+summary(model_attempts_subset)$coefficients[Estimate,]
+summary(model_attempts_subset)$coefficients[1,]
+summary(model_attempts_subset)$coefficients[,1]
+summary(model_attempts_subset)$coefficients[,Estimate]
+summary(model_attempts_subset)$coefficients[,"Estimate"]
+exp(summary(model_attempts_subset)$coefficients[,"Estimate"])
+rm(list=ls())#
+#
+setwd("~/Dropbox/Cenzer lab dropbox/Mate choice/2019 mate choice")#
+#
+source("stats/data_organizing/hour_one_attempts.R")#
+#
+library(lme4)#
+#
+#we want: nathost, pophost, Mnat#
+data_all<-load_hour_one_attempts()#
+##Rename nathost to Femnat so you know one is Female and one is Male, because I just reinterpreted everything thinking Mnat was Maternal and I feel very dumb.#
+####################ATTEMPTS#
+###Trying this out with a binomial, assuming the maximum number of possible attempts is 15, 30, or 60 (max(data_all$attempts), or that times 2, or that times 4).#
+data_all$nonattempts<-30-data_all$attempts#
+#data_all<-data_all[!is.na(data_all$thorax),]#
+#
+data<-data.frame(R1=data_all$attempts, R2=data_all$nonattempts, A=data_all$c_Femnat, B=data_all$c_phost, C=data_all$c_Malenat)#
+#run AICprobs script#
+setwd("~/Dropbox/My Mac (Meredith’s Macbook Air)/Documents/R/generic models/")#
+source("AICprobabilities.R")#
+source("generic models-binomial R1-R2 3-FF.R")#
+sort(summary$AIC)#
+sort(P, decreasing=TRUE, index.return=TRUE)#
+#max=15: top model, with 99.5% probability is m17#
+#max=30: top model, with 98.9% probability (!!!) is m17#
+#max=60: top model, with 98.6% probability (!!!) is m17#
+#
+model<-glm(cbind(attempts,nonattempts)~c_Femnat*c_phost*c_Malenat, data=data_all, family=binomial)#
+summary(model)
+data_rej<-data_all[data_all$attempts!=0,]#
+#
+data_rej$acceptances<-data_rej$attempts-data_rej$rejections#
+#
+data<-data.frame(R1=data_rej$acceptances, R2=data_rej$rejections, A=data_rej$c_Femnat, B=data_rej$c_phost, C=data_rej$c_Malenat, X=data_rej$groupID) #again, just make it glms#
+#run AICprobs script#
+setwd("~/Dropbox/My Mac (Meredith’s Macbook Air)/Documents/R/generic models/")#
+source("AICprobabilities.R")#
+source("generic models-binomial R1-R2 3-FF.R")#
+sort(summary$AIC)#
+sort(P, decreasing=TRUE, index.return=TRUE)
+rej_model<-glm(cbind(rejections, acceptances)~c_Femnat*c_Malenat + c_phost*c_Malenat, family=binomial, data=data_rej)#
+summary(rej_model)
+rej_model<-glm(cbind(rejections, acceptances)~c_Femnat*c_Malenat + c_phost*c_Malenat, family=binomial, data=data_rej)#
+summary(rej_model)$coef
+rej_model<-glm(cbind(rejections, acceptances)~c_Femnat*c_Malenat + c_phost*c_Malenat, family=binomial, data=data_rej)#
+summary(rej_model)$coef[,1]
+rej_model<-glm(cbind(rejections, acceptances)~c_Femnat*c_Malenat + c_phost*c_Malenat, family=binomial, data=data_rej)#
+exp(summary(rej_model)$coef[,1])
+rej_model<-glm(cbind(rejections, acceptances)~c_Femnat*c_Malenat + c_phost*c_Malenat, family=binomial, data=data_rej)#
+exp(summary(model)$coef[,1])
+rej_model<-glm(cbind(rejections, acceptances)~c_Femnat*c_Malenat + c_phost*c_Malenat, family=binomial, data=data_rej)#
+exp(summary(model_attempts_subset)$coef[,1])
+rm(list=ls())#
+#
+#stats for male mating behavior#
+setwd("~/Dropbox/Cenzer lab dropbox/Mate choice/2019 mate choice")#
+source("stats/data_organizing/repeated_checks_attempts.R")#
+data_all<-load_repeated_checks_attempts()#
+#
+library(lme4)#
+#we want: Femnat, pophost, Malenat
+tempdata<-data_all[is.na(data_all$mate_trt),] #for analysis without times when the female was in copula#
+#
+#aggregate this#
+subdata<-aggregate(attempts~ID*c_Femnat*c_phost*c_Malenat, data=tempdata, FUN=sum)#
+subdata$nonattempts <- aggregate(attempts~ID*c_Femnat*c_phost*c_Malenat, data=tempdata, FUN=length)$attempts*10#
+#
+data<-data.frame(R1=subdata$attempts, R2=subdata$nonattempts, A=subdata$c_Femnat, B=subdata$c_phost, C=subdata$c_Malenat)
+model_attempts_subset <- glm(cbind(attempts, nonattempts)~c_phost*c_Malenat, family=binomial, data=subdata)#
+summary(model_attempts_subset)
+rej_model<-glm(cbind(rejections, acceptances)~c_Femnat*c_Malenat + c_phost*c_Malenat, family=binomial, data=data_rej)#
+exp(summary(model_attempts_subset)$coef[,1])
+modelC<-glm(cbind(R1, R2)~A*C, family=binomial, data=data_sub_C)#
+summary(modelC)
+data_sub_C<-data[data$B==-1,]#
+modelC<-glm(cbind(R1, R2)~A*C, family=binomial, data=data_sub_C)#
+summary(modelC)
+data_all$nonattempts<-30-data_all$attempts#
+#data_all<-data_all[!is.na(data_all$thorax),]#
+#
+data<-data.frame(R1=data_all$attempts, R2=data_all$nonattempts, A=data_all$c_Femnat, B=data_all$c_phost, C=data_all$c_Malenat)
+rm(list=ls())#
+#
+setwd("~/Dropbox/Cenzer lab dropbox/Mate choice/2019 mate choice")#
+#
+source("stats/data_organizing/hour_one_attempts.R")#
+#
+library(lme4)#
+#
+#we want: nathost, pophost, Mnat#
+data_all<-load_hour_one_attempts()#
+##Rename nathost to Femnat so you know one is Female and one is Male, because I just reinterpreted everything thinking Mnat was Maternal and I feel very dumb.#
+####################ATTEMPTS#
+###Trying this out with a binomial, assuming the maximum number of possible attempts is 15, 30, or 60 (max(data_all$attempts), or that times 2, or that times 4).#
+data_all$nonattempts<-30-data_all$attempts#
+#data_all<-data_all[!is.na(data_all$thorax),]
+rm(list=ls())#
+#
+setwd("~/Dropbox/Cenzer lab dropbox/Mate choice/2019 mate choice")#
+#
+source("stats/data_organizing/hour_one_attempts.R")#
+#
+library(lme4)#
+#
+#we want: nathost, pophost, Mnat#
+data_all<-load_hour_one_attempts()#
+##Rename nathost to Femnat so you know one is Female and one is Male, because I just reinterpreted everything thinking Mnat was Maternal and I feel very dumb.#
+####################ATTEMPTS#
+###Trying this out with a binomial, assuming the maximum number of possible attempts is 15, 30, or 60 (max(data_all$attempts), or that times 2, or that times 4).#
+data_all$nonattempts<-30-data_all$attempts#
+#data_all<-data_all[!is.na(data_all$thorax),]#
+#
+data<-data.frame(R1=data_all$attempts, R2=data_all$nonattempts, A=data_all$c_Femnat, B=data_all$c_phost, C=data_all$c_Malenat)
+data_sub_C<-data[data$B==-1,]#
+modelC<-glm(cbind(R1, R2)~A*C, family=binomial, data=data_sub_C)#
+summary(modelC)
+rej_model<-glm(cbind(rejections, acceptances)~c_Femnat*c_Malenat + c_phost*c_Malenat, family=binomial, data=data_rej)#
+exp(summary(modelC)$coef[,1])
+data_sub_K<-data[data$B==1,]#
+modelK<-glm(cbind(R1, R2)~A*C, family=binomial, data=data_sub_K)#
+summary(modelK)
+rej_model<-glm(cbind(rejections, acceptances)~c_Femnat*c_Malenat + c_phost*c_Malenat, family=binomial, data=data_rej)#
+exp(summary(modelK)$coef[,1])
+data_rej<-data_all[data_all$attempts!=0,]#
+#
+data_rej$acceptances<-data_rej$attempts-data_rej$rejections
+summary<-aggregate(acceptances/attempts~c_c_phost*c_Malenat, data=data_rej, FUN=mean)#
+summary
+summary<-aggregate(acceptances/attempts~c_phost*c_Malenat, data=data_rej, FUN=mean)#
+summary
+rej_model<-glm(cbind(rejections, acceptances)~c_Femnat*c_Malenat + c_phost*c_Malenat, family=binomial, data=data_rej)#
+summary(rej_model)
+anova(m16, m13, test="Chisq") #keeping in A*C improves fit#
+anova(m16, m17, test="Chisq") #3-way interaction does nobody any good#
+anova(m10, m13, test="Chisq") #without A*C, A does not improve fit
+#run AICprobs script#
+setwd("~/Dropbox/My Mac (Meredith’s Macbook Air)/Documents/R/generic models/")#
+source("AICprobabilities.R")#
+source("generic models-binomial R1-R2 3-FF.R")#
+sort(summary$AIC)#
+sort(P, decreasing=TRUE, index.return=TRUE)#
+##top: m16, m17, m10, m13
+data_rej<-data_all[data_all$attempts!=0,]#
+#
+data_rej$acceptances<-data_rej$attempts-data_rej$rejections#
+#
+data<-data.frame(R1=data_rej$acceptances, R2=data_rej$rejections, A=data_rej$c_Femnat, B=data_rej$c_phost, C=data_rej$c_Malenat, X=data_rej$groupID) #again, just make it glms#
+#run AICprobs script#
+setwd("~/Dropbox/My Mac (Meredith’s Macbook Air)/Documents/R/generic models/")#
+source("AICprobabilities.R")#
+source("generic models-binomial R1-R2 3-FF.R")#
+sort(summary$AIC)#
+sort(P, decreasing=TRUE, index.return=TRUE)#
+##top: m16, m17, m10, m13
+anova(m16, m13, test="Chisq") #keeping in A*C improves fit#
+anova(m16, m17, test="Chisq") #3-way interaction does nobody any good#
+anova(m10, m13, test="Chisq") #without A*C, A does not improve fit
+m18
+m17
+m16
+#A*B does not improve fit#
+anova(m17, m18, test="Chisq")
+anova(m10, m13, test="Chisq") #without A*C, A does not improve fit
+m15
+#without A*C, A does not improve fit#
+anova(m15, m17, test="Chisq")
+anova(m15, m13, test="Chisq") #A*C improves fit
+anova(m15, m17, test="Chisq") #A*C improves fit
+m16
+rej_model<-glm(cbind(rejections, acceptances)~c_Femnat*c_Malenat + c_phost*c_Malenat, family=binomial, data=data_rej)#
+summary(rej_model)
+m13
+m10
+summary(m9)
+summary(m10)
+data_sub_C<-data_rej[data_rej$Female_nat=="C.corindum",]#
+modelC<-glm(cbind(rejections, acceptances)~c_Malenat*c_phost, family=binomial, data=data_sub_C)#
+summary(modelC)
+data_sub_K<-data_rej[data_rej$Female_nat=="K.elegans",]#
+modelK<-glm(cbind(rejections, acceptances)~c_Malenat*c_phost, family=binomial, data=data_sub_K)#
+summary(modelK)
+summary
+summary<-aggregate(acceptances/attempts~c_phost*c_Malenat, data=data_rej, FUN=mean)#
+summary
+summary<-aggregate(acceptances/attempts~c_phost*c_Malenat, data=data_rej, FUN=length)#
+summary
+data_sub_C<-data_rej[data_rej$c_phost=="C.corindum",]#
+modelC<-glm(cbind(rejections, acceptances)~c_Malenat*Female_nat, family=binomial, data=data_sub_C)#
+summary(modelC)
+modelC<-glm(cbind(rejections, acceptances)~c_Malenat*c_Femnat, family=binomial, data=data_sub_C)
+head(data_sub_C)
+data_sub_C<-data_rej[data_rej$c_phost=="C.corindum",]
+head(data_sub_C)
+head(data_rej)
+data_sub_C<-data_rej[data_rej$pophost=="C.corindum",]#
+modelC<-glm(cbind(rejections, acceptances)~c_Malenat*c_Femnat, family=binomial, data=data_sub_C)#
+summary(modelC)
+data_sub_C<-data_rej[data_rej$pophost=="C.corindum",]#
+modelC<-glm(cbind(rejections, acceptances)~c_Malenat*c_Femnat, family=binomial, data=data_sub_C)#
+summary(modelC)#
+#
+data_sub_K<-data_rej[data_rej$pophost=="K.elegans",]#
+modelK<-glm(cbind(rejections, acceptances)~c_Malenat*c_Femnat, family=binomial, data=data_sub_K)#
+summary(modelK)
+rm(list=ls())#
+#
+#stats for male mating behavior#
+setwd("~/Dropbox/Cenzer lab dropbox/Mate choice/2019 mate choice")#
+#
+#load hour_one_attempts data#
+source("stats/data_organizing/hour_one_attempts.R")#
+data_h1<-load_hour_one_attempts()#
+data_h1$acceptances <- data_h1$attempts-data_h1$rejections#
+#
+#load hour_one_attempts data#
+source("stats/data_organizing/repeated_checks_attempts.R")#
+data_rc_all<-load_repeated_checks_attempts()#
+#
+data_rc<-data_rc_all[is.na(data_rc_all$mate_trt),] ##Make sure you exclude cases where they are currently mating!#
+####Make it a three panel figure with firsthour as top panel, firsthour rejections as middle panel, and 48 hours as bottom panel#
+#
+####Plotting pop host on x-axis#
+summary_fm<-aggregate(attempts~Female_nat*M_nat*pophost, data=data_h1, FUN=mean)#
+summary_fm#
+#
+summary_rej<-aggregate(acceptances/attempts~Female_nat*M_nat*pophost, data=data_h1, FUN=mean)#
+summary_rej#
+#
+summary_rc<-aggregate(attempts~Female_nat*M_nat*pophost, FUN=mean, data=data_rc)#
+summary_rc#
+#
+x_space<-c(0.95,1.3,1.7,2.05)#
+#
+setwd("~/Dropbox/My Mac (Meredith’s Macbook Air)/Documents/publications/mate choice/thirddraft/figs")#
+#
+pdf(file="attempts_plot_3.pdf", width=3.8, height=6.5)#
+par(ps=8)#
+#
+split.screen(rbind(c(0,1,0.68,1), c(0,1,0.38,0.68), c(0,1,0,0.38)))#
+#
+screen(1)#
+par(mai=c(0.1, 0.6, 0.2, 0.1))#
+plot(summary_fm$attempts~rep(x_space, each=2), pch=c(1, 19)[as.factor(summary_fm$Female_nat)], ylim=c(0,4.2), xlim=c(0.8,2.2), cex=1, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=2, at=seq(0,4, by=1), labels=rep("", times=5))#
+mtext(text=c("0", "1", "2", "3", "4"), side=2, at=seq(0,4,by=1), line=0.6)#
+#
+title(ylab="Male mating attempts", line=1.8)#
+#
+lines(x=c(1.5,1.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=x_space[1:2],y=c(summary_fm$attempts[1],summary_fm$attempts[3]), lty=2, lwd=1)#
+lines(x=x_space[1:2],y=c(summary_fm$attempts[2],summary_fm$attempts[4]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_fm$attempts[5],summary_fm$attempts[7]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_fm$attempts[6],summary_fm$attempts[8]), lty=2, lwd=1)#
+#
+legend(1.55,1.2, legend=c(expression(paste("Female dev host ", italic("C. corindum"))), expression(paste("Female dev host ", italic("K. elegans")))),  pch=c(1,19), cex=0.8, pt.cex=0.75, y.intersp=1)#
+#
+text(1.15, 4.12, labels=expression(paste("Gene B/G: ", italic("C. corindum"))), cex=1)#
+text(1.85,4.1, labels=expression(paste("Gene B/G: ", italic("K. elegans"))), cex=1)#
+lines(x=c(0.5,2.5), y=c(3.88, 3.88))#
+#
+mtext("A. Mating attempts in hour one", side=3, adj=0, font=2)#
+screen(2)#
+par(mai=c(0.1, 0.6, 0.2, 0.1))#
+plot(summary_rej$acceptances~rep(x_space, each=2), pch=c(1, 19)[as.factor(summary_rej$Female_nat)], ylim=c(0.5,1), xlim=c(0.8,2.2), cex=1, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=2, at=seq(0,1, by=0.5), labels=rep("", times=3))#
+mtext(text=c("0", "0.5", "1"), side=2, at=seq(0,1,by=0.5), line=0.6)#
+#
+title(ylab="Proportion of attempts accepted", line=1.8)#
+#
+lines(x=c(1.5,1.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=x_space[1:2],y=c(summary_rej$acceptances[1],summary_rej$acceptances[3]), lty=2, lwd=1)#
+lines(x=x_space[1:2],y=c(summary_rej$acceptances[2],summary_rej$acceptances[4]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_rej$acceptances[5],summary_rej$acceptances[7]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_rej$acceptances[6],summary_rej$acceptances[8]), lty=2, lwd=1)#
+#
+mtext("B. Female acceptances in hour one", side=3, adj=0, font=2)#
+screen(3)#
+par(mai=c(0.6, 0.6, .2, .1))#
+#
+plot(summary_rc$attempts~rep(x_space, each=2), pch=c(1, 19)[as.factor(summary_rc$Female_nat)], ylim=c(0,1), xlim=c(0.8,2.2), cex=0.9, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=x_space, labels=rep("",times=4))#
+mtext(side=1, text=rep(c(expression(italic("C. corindum")), expression(italic("K. elegans"))), times=2), line=c(0.5,0.6,0.5,0.6), at=x_space)#
+#
+axis(side=2, at=seq(0,1, by=0.25), labels=rep("", times=5))#
+mtext(text=c("0", "0.25", "0.50", "0.75", "1"), side=2, at=seq(0,1,by=0.25), line=0.6)#
+#
+title(ylab="Male mating attempts (per 10 min)", line=1.8)#
+title(xlab="Male dev host", line=1.8)#
+#
+lines(x=c(1.5,1.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=x_space[1:2],y=c(summary_rc$attempts[1],summary_rc$attempts[3]), lty=2, lwd=1)#
+lines(x=x_space[1:2],y=c(summary_rc$attempts[2],summary_rc$attempts[4]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_rc$attempts[5],summary_rc$attempts[7]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_rc$attempts[6],summary_rc$attempts[8]), lty=2, lwd=1)#
+mtext("C. Mating attempts over 48 hours", side=3, adj=0, font=2)#
+#
+close.screen(all.screens=TRUE)#
+#
+dev.off()
+rm(list=ls())#
+#
+#stats for male mating behavior#
+setwd("~/Dropbox/Cenzer lab dropbox/Mate choice/2019 mate choice")#
+#
+#load hour_one_attempts data#
+source("stats/data_organizing/hour_one_attempts.R")#
+data_h1<-load_hour_one_attempts()#
+data_h1$acceptances <- data_h1$attempts-data_h1$rejections#
+#
+#load hour_one_attempts data#
+source("stats/data_organizing/repeated_checks_attempts.R")#
+data_rc_all<-load_repeated_checks_attempts()#
+#
+data_rc<-data_rc_all[is.na(data_rc_all$mate_trt),] ##Make sure you exclude cases where they are currently mating!#
+####Make it a three panel figure with firsthour as top panel, firsthour rejections as middle panel, and 48 hours as bottom panel#
+#
+####Plotting pop host on x-axis#
+summary_fm<-aggregate(attempts~Female_nat*M_nat*pophost, data=data_h1, FUN=mean)#
+summary_fm#
+#
+summary_rej<-aggregate(acceptances/attempts~Female_nat*M_nat*pophost, data=data_h1, FUN=mean)#
+summary_rej#
+#
+summary_rc<-aggregate(attempts~Female_nat*M_nat*pophost, FUN=mean, data=data_rc)#
+summary_rc#
+#
+x_space<-c(0.95,1.3,1.7,2.05)#
+#
+setwd("~/Dropbox/My Mac (Meredith’s Macbook Air)/Documents/publications/mate choice/thirddraft/figs")#
+#
+pdf(file="attempts_plot_3.pdf", width=3.8, height=6.5)#
+par(ps=8)#
+#
+split.screen(rbind(c(0,1,0.68,1), c(0,1,0.38,0.68), c(0,1,0,0.38)))#
+#
+screen(1)#
+par(mai=c(0.1, 0.6, 0.2, 0.1))#
+plot(summary_fm$attempts~rep(x_space, each=2), pch=c(1, 19)[as.factor(summary_fm$Female_nat)], ylim=c(0,4.2), xlim=c(0.8,2.2), cex=1, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=2, at=seq(0,4, by=1), labels=rep("", times=5))#
+mtext(text=c("0", "1", "2", "3", "4"), side=2, at=seq(0,4,by=1), line=0.6)#
+#
+title(ylab="Male mating attempts", line=1.8)#
+#
+lines(x=c(1.5,1.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=x_space[1:2],y=c(summary_fm$attempts[1],summary_fm$attempts[3]), lty=2, lwd=1)#
+lines(x=x_space[1:2],y=c(summary_fm$attempts[2],summary_fm$attempts[4]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_fm$attempts[5],summary_fm$attempts[7]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_fm$attempts[6],summary_fm$attempts[8]), lty=2, lwd=1)#
+#
+legend(1.55,1.2, legend=c(expression(paste("Female dev host ", italic("C. corindum"))), expression(paste("Female dev host ", italic("K. elegans")))),  pch=c(1,19), cex=0.8, pt.cex=0.75, y.intersp=1)#
+#
+text(1.15, 4.12, labels=expression(paste("Gene B/G: ", italic("C. corindum"))), cex=1)#
+text(1.85,4.1, labels=expression(paste("Gene B/G: ", italic("K. elegans"))), cex=1)#
+lines(x=c(0.5,2.5), y=c(3.88, 3.88))#
+#
+mtext("A. Mating attempts in hour one", side=3, adj=0, font=2)#
+screen(2)#
+par(mai=c(0.1, 0.6, 0.2, 0.1))#
+plot(summary_rej$acceptances~rep(x_space, each=2), pch=c(1, 19)[as.factor(summary_rej$Female_nat)], ylim=c(0.5,1), xlim=c(0.8,2.2), cex=1, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=2, at=seq(0.5,1, by=0.25), labels=rep("", times=3))#
+mtext(text=c("0.5", "0.75", "1"), side=2, at=seq(0.5,1,by=0.25), line=0.6)#
+#
+title(ylab="Proportion of attempts accepted", line=1.8)#
+#
+lines(x=c(1.5,1.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=x_space[1:2],y=c(summary_rej$acceptances[1],summary_rej$acceptances[3]), lty=2, lwd=1)#
+lines(x=x_space[1:2],y=c(summary_rej$acceptances[2],summary_rej$acceptances[4]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_rej$acceptances[5],summary_rej$acceptances[7]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_rej$acceptances[6],summary_rej$acceptances[8]), lty=2, lwd=1)#
+#
+mtext("B. Female acceptances in hour one", side=3, adj=0, font=2)#
+screen(3)#
+par(mai=c(0.6, 0.6, .2, .1))#
+#
+plot(summary_rc$attempts~rep(x_space, each=2), pch=c(1, 19)[as.factor(summary_rc$Female_nat)], ylim=c(0,1), xlim=c(0.8,2.2), cex=0.9, xlab="", ylab="", xaxt='n', yaxt='n')#
+#
+axis(side=1, at=x_space, labels=rep("",times=4))#
+mtext(side=1, text=rep(c(expression(italic("C. corindum")), expression(italic("K. elegans"))), times=2), line=c(0.5,0.6,0.5,0.6), at=x_space)#
+#
+axis(side=2, at=seq(0,1, by=0.25), labels=rep("", times=5))#
+mtext(text=c("0", "0.25", "0.50", "0.75", "1"), side=2, at=seq(0,1,by=0.25), line=0.6)#
+#
+title(ylab="Male mating attempts (per 10 min)", line=1.8)#
+title(xlab="Male dev host", line=1.8)#
+#
+lines(x=c(1.5,1.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+#connect treatment types#
+lines(x=x_space[1:2],y=c(summary_rc$attempts[1],summary_rc$attempts[3]), lty=2, lwd=1)#
+lines(x=x_space[1:2],y=c(summary_rc$attempts[2],summary_rc$attempts[4]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_rc$attempts[5],summary_rc$attempts[7]), lty=2, lwd=1)#
+lines(x=x_space[3:4],y=c(summary_rc$attempts[6],summary_rc$attempts[8]), lty=2, lwd=1)#
+mtext("C. Mating attempts over 48 hours", side=3, adj=0, font=2)#
+#
+close.screen(all.screens=TRUE)#
+#
+dev.off()
+rm(list=ls())#
+#
+#stats for male mating behavior#
+setwd("~/Dropbox/Cenzer lab dropbox/Mate choice/2019 mate choice")#
+#
+#load hour_one_attempts data#
+source("stats/data_organizing/hour_one_attempts.R")#
+data_h1<-load_hour_one_attempts()#
+data_h1$acceptances <- data_h1$attempts-data_h1$rejections#
+#
+#load hour_one_attempts data#
+source("stats/data_organizing/repeated_checks_attempts.R")#
+data_rc_all<-load_repeated_checks_attempts()#
+#
+data_rc<-data_rc_all[is.na(data_rc_all$mate_trt),] ##Make sure you exclude cases where they are currently mating!#
+####Make it a three panel figure with firsthour as top panel, firsthour rejections as middle panel, and 48 hours as bottom panel#
+#
+####Plotting pop host on x-axis#
+summary_fm<-aggregate(attempts~Female_nat*M_nat*pophost, data=data_h1, FUN=mean)#
+summary_fm#
+#
+summary_rej<-aggregate(acceptances/attempts~Female_nat*M_nat*pophost, data=data_h1, FUN=mean)#
+summary_rej#
+#
+summary_rc<-aggregate(attempts~Female_nat*M_nat*pophost, FUN=mean, data=data_rc)#
+summary_rc
+barplot(summary_fm)
+barplot(summary_fm$attempts)
+x_space<-c(0.95,1.3,1.7,2.05)
+barplot(summary_fm$attempts~x_space)
+barplot(summary_fm$attempts~rep(x_space, each=2))
+barplot(summary_fm$attempts[summary_fm$pophost=="C.corindum"]~x_space)
+?plot
+plot(summary_fm$attempts~rep(x_space, each=2), type='h')
+?barplot
+x_space<-c(0.95, 1.05, 1.3, 1.4, 1.7, 1.8, 2.05, 2.15)
+barplot(summary_fm$attempts~x_space, col=c(0,1)[as.factor(summary_fm$Female_nat)], ylim=c(0,4.2), xlim=c(0.8,2.2), cex=1, xlab="", ylab="", xaxt='n', yaxt='n')
+barplot(summary_fm$attempts~x_space, col=c(0,1)[as.factor(summary_fm$Female_nat)])
+barplot(summary_fm$attempts~x_space, col=c(0,1)[as.factor(summary_fm$Female_nat)]), ylim=c(0,4.2), xlim=c(0.8,2.2), cex=1, xlab="", ylab="")
+barplot(summary_fm$attempts~x_space, col=c(0,1)[as.factor(summary_fm$Female_nat)]))
+barplot(summary_fm$attempts~x_space, col=c(0,1)[as.factor(summary_fm$Female_nat)],#
+ylim=c(0,4.2), xlim=c(0.8,2.2), cex=1, xlab="", ylab="")
+barplot(summary_fm$attempts~x_space, col=c(0,1)[as.factor(summary_fm$Female_nat)], ylim=c(0,4.2))
+barplot(summary_fm$attempts~x_space, col=c(0,1)[as.factor(summary_fm$Female_nat)], ylim=c(0,4.2), xlim=c(0.8,2.2))
+barplot(summary_fm$attempts, col=c(0,1)[as.factor(summary_fm$Female_nat)], ylim=c(0,4.2), space=c(0,1,0,1,0,1,0,1))
+par(mai=c(0.1, 0.6, 0.2, 0.1))#
+barplot(summary_fm$attempts, col=c(0,1)[as.factor(summary_fm$Female_nat)], ylim=c(0,4.2), space=c(0, 0,1,0,1,0,1,0))
+summary_fm<-aggregate(attempts~M_nat*Female_nat*pophost, data=data_h1, FUN=mean)#
+summary_fm
+barplot(summary_fm$attempts, col=c(0,1)[as.factor(summary_fm$M_nat)], ylim=c(0,4.2), space=c(0, 0,1,0,1,0,1,0))
+title(ylab="Male mating attempts", line=1.8)
+lines(x=c(1.5,1.5), y=c(-0.5,7), lty=3, lwd=1)
+lines(x=c(5.5,5.5), y=c(-0.5,7), lty=3, lwd=1)
+text(1.15, 4.12, labels=expression(paste("Gene B/G: ", italic("C. corindum"))), cex=1)#
+text(1.85,4.1, labels=expression(paste("Gene B/G: ", italic("K. elegans"))), cex=1)#
+lines(x=c(0.5,2.5), y=c(3.88, 3.88))
+text(2.75, 4.12, labels=expression(paste("Gene B/G: ", italic("C. corindum"))), cex=1)#
+text(8.25,4.1, labels=expression(paste("Gene B/G: ", italic("K. elegans"))), cex=1)
+lines(x=c(0,10), y=c(3.88, 3.88))
+lines(x=c(-2,12), y=c(3.88, 3.88))
+barplot(summary_fm$attempts, col=c(0,1)[as.factor(summary_fm$M_nat)], ylim=c(0,4.2), space=c(0, 0,1,0,1,0,1,0), yaxt='n')
+axis(side=2, at=seq(0,4, by=1), labels=rep("", times=5))#
+mtext(text=c("0", "1", "2", "3", "4"), side=2, at=seq(0,4,by=1), line=0.6)#
+#
+title(ylab="Male mating attempts", line=1.8)
+lines(x=c(5.5,5.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+#legend(1.55,1.2, legend=c(expression(paste("Female dev host ", italic("C. corindum"))), expression(paste("Female dev host ", italic("K. elegans")))),  pch=c(1,19), cex=0.8, pt.cex=0.75, y.intersp=1)#
+#
+text(2.75, 4.12, labels=expression(paste("Gene B/G: ", italic("C. corindum"))), cex=1)#
+text(8.25,4.1, labels=expression(paste("Gene B/G: ", italic("K. elegans"))), cex=1)#
+lines(x=c(-2,12), y=c(3.88, 3.88))#
+#
+mtext("A. Mating attempts in hour one", side=3, adj=0, font=2)
+summary_rej<-aggregate(acceptances/attempts~M_nat*Female_nat*pophost, data=data_h1, FUN=mean)#
+summary_rej
+barplot(summary_rej$acceptances, col=c(0,1)[as.factor(summary_rej$M_nat)], ylim=c(0.5,1), space=c(0, 0,1,0,1,0,1,0), yaxt='n')#
+#
+axis(side=2, at=seq(0,4, by=1), labels=rep("", times=5))#
+mtext(text=c("0", "1", "2", "3", "4"), side=2, at=seq(0,4,by=1), line=0.6)#
+#
+lines(x=c(5.5,5.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+title(ylab="Proportion of attempts accepted", line=1.8)
+summary_fm<-aggregate(attempts~M_nat*Female_nat*pophost, data=data_h1, FUN=mean)#
+summary_fm#
+#
+summary_rej<-aggregate(acceptances/attempts~M_nat*Female_nat*pophost, data=data_h1, FUN=mean)#
+summary_rej#
+#
+summary_rc<-aggregate(attempts~M_nat*Female_nat*pophost, FUN=mean, data=data_rc)#
+summary_rc
+barplot(summary_rej$acceptances, col=c(0,1)[as.factor(summary_rej$M_nat)], ylim=c(0.5,), space=c(0, 0,1,0,1,0,1,0), yaxt='n')#
+#
+lines(x=c(5.5,5.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+axis(side=2, at=seq(0.5,1, by=0.25), labels=rep("", times=3))#
+mtext(text=c("0.5", "0.75", "1"), side=2, at=seq(0.5,1,by=0.25), line=0.6)#
+#
+title(ylab="Proportion of attempts accepted", line=1.8)#
+#
+mtext("B. Female acceptances in hour one", side=3, adj=0, font=2)
+par(mai=c(0.6, 0.6, .2, .1))#
+barplot(summary_rc$attempts, col=c(0,1)[as.factor(summary_rc$M_nat)], ylim=c(0,1), space=c(0, 0,1,0,1,0,1,0), yaxt='n')
+lines(x=c(5.5,5.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+axis(side=1, at=x_space, labels=rep("",times=4))#
+mtext(side=1, text=rep(c(expression(italic("C. corindum")), expression(italic("K. elegans"))), times=2), line=c(0.5,0.6,0.5,0.6), at=x_space)
+mtext(side=1, text=rep(c(expression(italic("C. corindum")), expression(italic("K. elegans"))), times=2), line=c(0.5,0.6,0.5,0.6), at=c(1,4,7,10))
+axis(side=1, at=c(1,4,7,10), labels=rep("",times=4))#
+mtext(side=1, text=rep(c(expression(italic("C. corindum")), expression(italic("K. elegans"))), times=2), line=c(0.5,0.6,0.5,0.6), at=c(1,4,7,10))#
+#
+axis(side=2, at=seq(0,1, by=0.25), labels=rep("", times=5))#
+mtext(text=c("0", "0.25", "0.50", "0.75", "1"), side=2, at=seq(0,1,by=0.25), line=0.6)
+title(ylab="Male mating attempts (per 10 min)", line=1.8)#
+title(xlab="Female dev host", line=1.8)#
+mtext("C. Mating attempts over 48 hours", side=3, adj=0, font=2)
+rm(list=ls())#
+#
+#stats for male mating behavior#
+setwd("~/Dropbox/Cenzer lab dropbox/Mate choice/2019 mate choice")#
+#
+#load hour_one_attempts data#
+source("stats/data_organizing/hour_one_attempts.R")#
+data_h1<-load_hour_one_attempts()#
+data_h1$acceptances <- data_h1$attempts-data_h1$rejections#
+#
+#load hour_one_attempts data#
+source("stats/data_organizing/repeated_checks_attempts.R")#
+data_rc_all<-load_repeated_checks_attempts()#
+#
+data_rc<-data_rc_all[is.na(data_rc_all$mate_trt),] ##Make sure you exclude cases where they are currently mating!#
+####Make it a three panel figure with firsthour as top panel, firsthour rejections as middle panel, and 48 hours as bottom panel#
+#
+####Plotting pop host on x-axis#
+summary_fm<-aggregate(attempts~M_nat*Female_nat*pophost, data=data_h1, FUN=mean)#
+summary_fm#
+#
+summary_rej<-aggregate(acceptances/attempts~M_nat*Female_nat*pophost, data=data_h1, FUN=mean)#
+summary_rej#
+#
+summary_rc<-aggregate(attempts~M_nat*Female_nat*pophost, FUN=mean, data=data_rc)#
+summary_rc#
+#
+#x_space<-c(0.95, 1.05, 1.3, 1.4, 1.7, 1.8, 2.05, 2.15)#
+#
+setwd("~/Dropbox/My Mac (Meredith’s Macbook Air)/Documents/publications/mate choice/thirddraft/figs")#
+#
+pdf(file="attempts_plot_4.pdf", width=3.8, height=6.5)#
+par(ps=8)#
+#
+split.screen(rbind(c(0,1,0.68,1), c(0,1,0.38,0.68), c(0,1,0,0.38)))#
+#
+screen(1)#
+par(mai=c(0.1, 0.6, 0.2, 0.1))#
+barplot(summary_fm$attempts, col=c(0,1)[as.factor(summary_fm$M_nat)], ylim=c(0,4.2), space=c(0, 0,1,0,1,0,1,0), yaxt='n')#
+#
+axis(side=2, at=seq(0,4, by=1), labels=rep("", times=5))#
+mtext(text=c("0", "1", "2", "3", "4"), side=2, at=seq(0,4,by=1), line=0.6)#
+#
+title(ylab="Male mating attempts", line=1.8)#
+#
+lines(x=c(5.5,5.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+#legend(1.55,1.2, legend=c(expression(paste("Female dev host ", italic("C. corindum"))), expression(paste("Female dev host ", italic("K. elegans")))),  pch=c(1,19), cex=0.8, pt.cex=0.75, y.intersp=1)#
+#
+text(2.75, 4.12, labels=expression(paste("Gene B/G: ", italic("C. corindum"))), cex=1)#
+text(8.25,4.1, labels=expression(paste("Gene B/G: ", italic("K. elegans"))), cex=1)#
+lines(x=c(-2,12), y=c(3.88, 3.88))#
+#
+mtext("A. Mating attempts in hour one", side=3, adj=0, font=2)#
+screen(2)#
+par(mai=c(0.1, 0.6, 0.2, 0.1))#
+barplot(summary_rej$acceptances, col=c(0,1)[as.factor(summary_rej$M_nat)], ylim=c(0.5,1), space=c(0, 0,1,0,1,0,1,0), yaxt='n')#
+#
+lines(x=c(5.5,5.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+axis(side=2, at=seq(0.5,1, by=0.25), labels=rep("", times=3))#
+mtext(text=c("0.5", "0.75", "1"), side=2, at=seq(0.5,1,by=0.25), line=0.6)#
+#
+title(ylab="Proportion of attempts accepted", line=1.8)#
+#
+mtext("B. Female acceptances in hour one", side=3, adj=0, font=2)#
+screen(3)#
+par(mai=c(0.6, 0.6, .2, .1))#
+barplot(summary_rc$attempts, col=c(0,1)[as.factor(summary_rc$M_nat)], ylim=c(0,1), space=c(0, 0,1,0,1,0,1,0), yaxt='n')#
+#
+lines(x=c(5.5,5.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+axis(side=1, at=c(1,4,7,10), labels=rep("",times=4))#
+mtext(side=1, text=rep(c(expression(italic("C. corindum")), expression(italic("K. elegans"))), times=2), line=c(0.5,0.6,0.5,0.6), at=c(1,4,7,10))#
+#
+axis(side=2, at=seq(0,1, by=0.25), labels=rep("", times=5))#
+mtext(text=c("0", "0.25", "0.50", "0.75", "1"), side=2, at=seq(0,1,by=0.25), line=0.6)#
+#
+title(ylab="Male mating attempts (per 10 min)", line=1.8)#
+title(xlab="Female dev host", line=1.8)#
+mtext("C. Mating attempts over 48 hours", side=3, adj=0, font=2)#
+#
+close.screen(all.screens=TRUE)#
+#
+dev.off()
+rm(list=ls())#
+#
+#stats for male mating behavior#
+setwd("~/Dropbox/Cenzer lab dropbox/Mate choice/2019 mate choice")#
+#
+#load hour_one_attempts data#
+source("stats/data_organizing/hour_one_attempts.R")#
+data_h1<-load_hour_one_attempts()#
+data_h1$acceptances <- data_h1$attempts-data_h1$rejections#
+#
+#load hour_one_attempts data#
+source("stats/data_organizing/repeated_checks_attempts.R")#
+data_rc_all<-load_repeated_checks_attempts()#
+#
+data_rc<-data_rc_all[is.na(data_rc_all$mate_trt),] ##Make sure you exclude cases where they are currently mating!#
+####Make it a three panel figure with firsthour as top panel, firsthour rejections as middle panel, and 48 hours as bottom panel#
+#
+####Plotting pop host on x-axis#
+summary_fm<-aggregate(attempts~M_nat*Female_nat*pophost, data=data_h1, FUN=mean)#
+summary_fm#
+#
+summary_rej<-aggregate(acceptances/attempts~M_nat*Female_nat*pophost, data=data_h1, FUN=mean)#
+summary_rej#
+#
+summary_rc<-aggregate(attempts~M_nat*Female_nat*pophost, FUN=mean, data=data_rc)#
+summary_rc#
+#
+#x_space<-c(0.95, 1.05, 1.3, 1.4, 1.7, 1.8, 2.05, 2.15)#
+#
+setwd("~/Dropbox/My Mac (Meredith’s Macbook Air)/Documents/publications/mate choice/thirddraft/figs")#
+#
+pdf(file="attempts_plot_4.pdf", width=3.8, height=6.5)#
+par(ps=8)#
+#
+split.screen(rbind(c(0,1,0.68,1), c(0,1,0.38,0.68), c(0,1,0,0.38)))#
+#
+screen(1)#
+par(mai=c(0.1, 0.6, 0.2, 0.1))#
+barplot(summary_fm$attempts, col=c(0,1)[as.factor(summary_fm$M_nat)], ylim=c(0,4.4), space=c(0, 0,1,0,1,0,1,0), yaxt='n')#
+#
+axis(side=2, at=seq(0,4, by=1), labels=rep("", times=5))#
+mtext(text=c("0", "1", "2", "3", "4"), side=2, at=seq(0,4,by=1), line=0.6)#
+#
+title(ylab="Male mating attempts", line=1.8)#
+#
+lines(x=c(5.5,5.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+#legend(1.55,1.2, legend=c(expression(paste("Female dev host ", italic("C. corindum"))), expression(paste("Female dev host ", italic("K. elegans")))),  pch=c(1,19), cex=0.8, pt.cex=0.75, y.intersp=1)#
+#
+text(2.75, 4.12, labels=expression(paste("Gene B/G: ", italic("C. corindum"))), cex=1)#
+text(8.25,4.1, labels=expression(paste("Gene B/G: ", italic("K. elegans"))), cex=1)#
+lines(x=c(-2,12), y=c(3.88, 3.88))#
+#
+mtext("A. Mating attempts in hour one", side=3, adj=0, font=2)#
+screen(2)#
+par(mai=c(0.1, 0.6, 0.2, 0.1))#
+barplot(summary_rej$acceptances, col=c(0,1)[as.factor(summary_rej$M_nat)], ylim=c(0,1), space=c(0, 0,1,0,1,0,1,0), yaxt='n')#
+#
+lines(x=c(5.5,5.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+axis(side=2, at=seq(0.5,1, by=0.25), labels=rep("", times=3))#
+mtext(text=c("0.5", "0.75", "1"), side=2, at=seq(0.5,1,by=0.25), line=0.6)#
+#
+title(ylab="Proportion of attempts accepted", line=1.8)#
+#
+mtext("B. Female acceptances in hour one", side=3, adj=0, font=2)#
+screen(3)#
+par(mai=c(0.6, 0.6, .2, .1))#
+barplot(summary_rc$attempts, col=c(0,1)[as.factor(summary_rc$M_nat)], ylim=c(0,1), space=c(0, 0,1,0,1,0,1,0), yaxt='n')#
+#
+lines(x=c(5.5,5.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+axis(side=1, at=c(1,4,7,10), labels=rep("",times=4))#
+mtext(side=1, text=rep(c(expression(italic("C. corindum")), expression(italic("K. elegans"))), times=2), line=c(0.5,0.6,0.5,0.6), at=c(1,4,7,10))#
+#
+axis(side=2, at=seq(0,1, by=0.25), labels=rep("", times=5))#
+mtext(text=c("0", "0.25", "0.50", "0.75", "1"), side=2, at=seq(0,1,by=0.25), line=0.6)#
+#
+title(ylab="Male mating attempts (per 10 min)", line=1.8)#
+title(xlab="Female developmental host", line=1.8)#
+mtext("C. Mating attempts over 48 hours", side=3, adj=0, font=2)#
+#
+close.screen(all.screens=TRUE)#
+#
+dev.off()
+rm(list=ls())#
+#
+#stats for male mating behavior#
+setwd("~/Dropbox/Cenzer lab dropbox/Mate choice/2019 mate choice")#
+#
+#load hour_one_attempts data#
+source("stats/data_organizing/hour_one_attempts.R")#
+data_h1<-load_hour_one_attempts()#
+data_h1$acceptances <- data_h1$attempts-data_h1$rejections#
+#
+#load hour_one_attempts data#
+source("stats/data_organizing/repeated_checks_attempts.R")#
+data_rc_all<-load_repeated_checks_attempts()#
+#
+data_rc<-data_rc_all[is.na(data_rc_all$mate_trt),] ##Make sure you exclude cases where they are currently mating!#
+####Make it a three panel figure with firsthour as top panel, firsthour rejections as middle panel, and 48 hours as bottom panel#
+#
+####Plotting pop host on x-axis#
+summary_fm<-aggregate(attempts~M_nat*Female_nat*pophost, data=data_h1, FUN=mean)#
+summary_fm#
+#
+summary_rej<-aggregate(acceptances/attempts~M_nat*Female_nat*pophost, data=data_h1, FUN=mean)#
+summary_rej#
+#
+summary_rc<-aggregate(attempts~M_nat*Female_nat*pophost, FUN=mean, data=data_rc)#
+summary_rc#
+#
+#x_space<-c(0.95, 1.05, 1.3, 1.4, 1.7, 1.8, 2.05, 2.15)#
+#
+setwd("~/Dropbox/My Mac (Meredith’s Macbook Air)/Documents/publications/mate choice/thirddraft/figs")#
+#
+pdf(file="attempts_plot_4.pdf", width=3.8, height=6.5)#
+par(ps=8)#
+#
+split.screen(rbind(c(0,1,0.68,1), c(0,1,0.38,0.68), c(0,1,0,0.38)))#
+#
+screen(1)#
+par(mai=c(0.1, 0.6, 0.2, 0.1))#
+barplot(summary_fm$attempts, col=c(0,1)[as.factor(summary_fm$M_nat)], ylim=c(0,4.2), space=c(0, 0,1,0,1,0,1,0), yaxt='n')#
+#
+axis(side=2, at=seq(0,4, by=1), labels=rep("", times=5))#
+mtext(text=c("0", "1", "2", "3", "4"), side=2, at=seq(0,4,by=1), line=0.6)#
+#
+title(ylab="Male mating attempts", line=1.8)#
+#
+lines(x=c(5.5,5.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+#legend(1.55,1.2, legend=c(expression(paste("Female dev host ", italic("C. corindum"))), expression(paste("Female dev host ", italic("K. elegans")))),  pch=c(1,19), cex=0.8, pt.cex=0.75, y.intersp=1)#
+#
+text(2.75, 3.92, labels=expression(paste("Gene B/G: ", italic("C. corindum"))), cex=1)#
+text(8.25, 3.9, labels=expression(paste("Gene B/G: ", italic("K. elegans"))), cex=1)#
+lines(x=c(-2,12), y=c(3.68, 3.68))#
+#
+mtext("A. Mating attempts in hour one", side=3, adj=0, font=2)#
+screen(2)#
+par(mai=c(0.1, 0.6, 0.2, 0.1))#
+barplot(summary_rej$acceptances, col=c(0,1)[as.factor(summary_rej$M_nat)], ylim=c(0,1), space=c(0, 0,1,0,1,0,1,0), yaxt='n')#
+#
+lines(x=c(5.5,5.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+axis(side=2, at=seq(0,1, by=0.5), labels=rep("", times=3))#
+mtext(text=c("0", "0.5", "1"), side=2, at=seq(0,1,by=0.5), line=0.6)#
+#
+title(ylab="Proportion of attempts accepted", line=1.8)#
+#
+mtext("B. Female acceptances in hour one", side=3, adj=0, font=2)#
+screen(3)#
+par(mai=c(0.6, 0.6, .2, .1))#
+barplot(summary_rc$attempts, col=c(0,1)[as.factor(summary_rc$M_nat)], ylim=c(0,1), space=c(0, 0,1,0,1,0,1,0), yaxt='n')#
+#
+lines(x=c(5.5,5.5), y=c(-0.5,7), lty=3, lwd=1)#
+#
+axis(side=1, at=c(1,4,7,10), labels=rep("",times=4))#
+mtext(side=1, text=rep(c(expression(italic("C. corindum")), expression(italic("K. elegans"))), times=2), line=c(0.5,0.6,0.5,0.6), at=c(1,4,7,10))#
+#
+axis(side=2, at=seq(0,1, by=0.25), labels=rep("", times=5))#
+mtext(text=c("0", "0.25", "0.50", "0.75", "1"), side=2, at=seq(0,1,by=0.25), line=0.6)#
+#
+title(ylab="Male mating attempts (per 10 min)", line=1.8)#
+title(xlab="Female developmental host", line=1.8)#
+mtext("C. Mating attempts over 48 hours", side=3, adj=0, font=2)#
+#
+close.screen(all.screens=TRUE)#
+#
+dev.off()
+3.3*3
+3.5*3
+3.5*3*4
+42*15
+rm(list=ls())#
+#
+#stats for male mating behavior#
+setwd("~/Dropbox/My Mac (Meredith’s MacBook Air)/Documents/Balloon vine project")#
+data<-read.csv("2021 August seedpod data.csv", header=TRUE, sep="", stringsAsCharacters=FALSE)
+data<-read.csv("2021 August seedpod data.csv", header=TRUE, sep="", stringsAscharacters=FALSE)
+#stats for male mating behavior#
+setwd("~/Dropbox/My Mac (Meredith’s MacBook Air)/Documents/Balloon vine project")#
+data<-read.csv("2021 August seedpod data.csv", header=TRUE, sep="")
+data<-read.csv("2021 August seedpod data.csv", header=TRUE, sep=",")
+data
+boxplot(radius~Population, data=data)
+boxplot(radius~damage_type, data=data)
+data_raw$SBB_binom <- 0#
+data_raw$SBB_binom[data_raw$damage_type=="SBB"]<-1
+data_raw<-read.csv("2021 August seedpod data.csv", header=TRUE, sep=",")#
+#
+boxplot(radius~damage_type, data=data)#
+data_raw$SBB_binom <- 0#
+data_raw$SBB_binom[data_raw$damage_type=="SBB"]<-1
+lm(radius~damage_type, data=data)
+summary(lm(radius~damage_type, data=data))
+summary(lm(radius~SBB_binom, data=data))
+summary(lm(radius~SBB_binom, data=data_raw))
+data_raw$HS_binom <- 0#
+data_raw$HS_binom[data_raw$damage_type=="HS"]<-1#
+#
+summary(lm(radius~HS_binom, data=data_raw))
+SBB_data<-data_raw[data_raw$SBB_binom==1,]#
+HS_data<-data_raw[data_raw$HS_binom==1,]
+head(data_raw)
+summary(lm(radius~HS_damage, data=HS_data))#
+summary(lm(radius~SBB_hole_num, data=SBB_data))
+HS_data$HS_damage[HS_data$HS_damage=="<5%"]<-5#
+HS_data$HS_damage<-as.numeric(HS_data$HS_damage)
+summary(lm(radius~HS_damage, data=HS_data))
+summary(lm(radius~SBB_hole_num, data=SBB_data))
+plot(radius~HS_damage, data=HS_data)
+plot(radius~SBB_hole_num, data=SBB_data)
+plot(radius~HS_damage, data=HS_data)
+summary(lm(radius~HS_binom, data=data_raw))
+summary(lm(radius~HS_binom, data=data_raw))#
+summary(lm(radius~SBB_binom, data=data_raw))
+summary(lm(radius~HS_binom+SBB_binom, data=data_raw))
+summary(lmer(radius~HS_binom + SBB_binom + (1|Population), data=data_raw))
+summary(lm(radius~HS_binom+SBB_binom + Population, data=data_raw))
+750/60
+650/60
+25*4
+(8*34.3+16*28)/4
+(8*34.3+16*28)/24
+325/25
+325/25300/20
+300/20
+300/20
+325/20
+324/20
+25*20
+500/4
+20*8
+20*12
+20*16
+20*20
+320/80
+40+27+17+80+3*26
+40+27+17
+setwd("~/Dropbox/My Mac (EE-ML-001)/Documents/GitHub/extreme-flight-trials/datasheets")#
+#
+datasheet_1<-read.csv("flight_trials_datasheets_round_1.csv")
+setwd("~/Dropbox/My Mac (EE-ML-001)/Documents/GitHub/extreme-flight-trials/datasheets")#
+#
+datasheet_1<-read.csv("flight_trial_datasheets_round_1.csv")
+datasheet_1
+datasheet_1
+datasheet_1$ID
+datasheet_1$ID[datasheet_1$ID!="ID"]
+datasheet_1$ID[datasheet_1$ID!="ID" & datasheet_1$ID!=""]
+as.numeric(datasheet_1$ID[datasheet_1$ID!="ID" & datasheet_1$ID!=""])
+setwd("~/Dropbox/My Mac (EE-ML-001)/Documents/GitHub/extreme-flight-trials/datasheets")#
+#
+datasheet_1<-read.csv("flight_trial_datasheets_round_1.csv")#
+IDs_1<-as.numeric(datasheet_1$ID[datasheet_1$ID!="ID" & datasheet_1$ID!=""])#
+#
+datasheet_2<-read.csv("flight_trial_datasheets_round_2.csv")#
+IDs_2<-as.numeric(datasheet_2$ID[datasheet_2$ID!="ID" & datasheet_2$ID!=""])#
+#
+datasheet_3<-read.csv("flight_trial_datasheets_round_3.csv")#
+IDs_3<-as.numeric(datasheet_3$ID[datasheet_3$ID!="ID" & datasheet_3$ID!=""])#
+#
+c(IDs_1, IDs_2, IDs_3)
+setwd("~/Dropbox/My Mac (EE-ML-001)/Documents/GitHub/extreme-flight-trials/datasheets")#
+#
+datasheet_1<-read.csv("flight_trial_datasheets_round_1.csv")#
+IDs_1<-as.numeric(datasheet_1$ID[datasheet_1$ID!="ID" & datasheet_1$ID!=""])#
+#
+datasheet_2<-read.csv("flight_trial_datasheets_round_2.csv")#
+IDs_2<-as.numeric(datasheet_2$ID[datasheet_2$ID!="ID" & datasheet_2$ID!=""])#
+#
+datasheet_3<-read.csv("flight_trial_datasheets_round_3.csv")#
+IDs_3<-as.numeric(datasheet_3$ID[datasheet_3$ID!="ID" & datasheet_3$ID!=""])#
+#
+c(IDs_1, IDs_2, IDs_3)
+IDs_2
+IDs_3
+sort(IDs_1, IDs_2, IDs_3)
+sort(IDs_1, IDs_2, IDs_3, na.rm=T)
+?sort
+sort(c(IDs_1, IDs_2, IDs_3, na.rm=T))
+sort(c(IDs_1, IDs_2, IDs_3))
+setwd("~/Dropbox/My Mac (EE-ML-001)/Documents/GitHub/extreme-flight-trials/datasheets")#
+#
+datasheet_1<-read.csv("flight_trial_datasheets_round_1.csv")#
+IDs_1<-as.numeric(datasheet_1$ID[datasheet_1$ID!="ID" & datasheet_1$ID!=""])#
+#
+datasheet_2<-read.csv("flight_trial_datasheets_round_2.csv")#
+IDs_2<-as.numeric(datasheet_2$ID[datasheet_2$ID!="ID" & datasheet_2$ID!=""])#
+#
+datasheet_3<-read.csv("flight_trial_datasheets_round_3.csv")#
+IDs_3<-as.numeric(datasheet_3$ID[datasheet_3$ID!="ID" & datasheet_3$ID!=""])#
+#
+IDs<-sort(c(IDs_1, IDs_2, IDs_3))#
+#
+write.csv(IDs, "IDs.csv")
+484*29
