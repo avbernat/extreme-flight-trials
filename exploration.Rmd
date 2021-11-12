@@ -1,0 +1,84 @@
+---
+title: "Untitled"
+author: "Anastasia Bernat"
+date: "11/11/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+rm(list=ls())
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+datapath = "/Users/anastasiabernat/Desktop/exflight-trial-data.csv"
+data = read.csv(datapath)
+
+data = data[data$ID != "ID",]
+data = data[data$died. != "Y" & data$died !="?",]
+data = data[data$chamber != "",]
+
+data
+```
+
+```{r}
+data$flew_b[data$flew=="Y"] = 1
+data$flew_b[data$flew=="N"] = -1
+```
+
+```{r}
+data$temp = as.numeric(data$temp)
+
+library(ggplot2)
+ggplot(data, aes(x=temp, fill=flew)) +
+  geom_histogram(bins=20) 
+```
+
+
+```{r}
+times2decimals = function(times) {
+  decimals = sapply(strsplit(times,":"),
+  function(x) {
+    x <- as.numeric(x)
+    x[1]+x[2]/60
+    }
+)
+  return(decimals)
+}
+
+data$time_start_dec = times2decimals(as.character(data$time_start))
+data$time_end_dec = times2decimals(as.character(data$time_end))
+
+duration = data$time_end_dec - data$time_start_dec
+
+# add 24 hrs for the bugs that flew overnight 
+duration[duration<0] + 24
+overnight_i = which(duration<0)
+duration[overnight_i] = duration[overnight_i] + 24
+
+data$duration = duration
+```
+
+
+```{r}
+plot(data$temp, data$duration)
+
+library(dplyr)
+contin = data %>%
+  filter(flight_type != "B", flew != "N")
+plot(contin$temp, contin$duration, xlab="temp (C)", ylab="duration (hrs)")
+
+# remove overnight flyers 
+d = data[data$duration < 15, ]
+plot(d$temp, d$duration)
+```
+
+I expected to see this shape.
+
+```{r}
+ggplot(contin, aes(x=duration, fill=flew)) +
+  geom_histogram(bins=30)  +
+  facet_grid(temp ~ ., scales = "free")
+```
+
+Flight dispersal is very plastic to hot temperatures. However, sensitive to cold temperatures. 
