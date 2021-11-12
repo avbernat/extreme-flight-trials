@@ -304,4 +304,4 @@ ID,died?,chamber,set_number,test_date,time_start,time_end,temp,RH,pop,flew,fligh
 1743,,A-4,016,11/5/21,10:52,11:22,40,70,PK,Y,B,1743,0.106,Y,,
 1746,,B-1,016,11/5/21,10:53,11:23,40,70,PK,Y,B,1746,0.062,N,,
 ID,died?,chamber,set_number,test_date,time_start,time_end,temp,RH,pop,flew,flight_type,ID,mass,Eggs,NOTES,next_day
-1731,,,017,11/12/21,,,20,70,PK,,,1731,,,,
+1731,,A-1,017,11/12/21,9:19,3:04,20,70,PK,Y,BC,1731,0.070,Y,,
