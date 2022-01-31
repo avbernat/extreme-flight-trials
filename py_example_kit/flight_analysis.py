@@ -347,15 +347,15 @@ def graph(time, speed):
 # time and distance SI units as strings.
 #************************************************************************************************************
 
-main_path = # input the path to the Flight_scripts directory here 
+main_path = "/Users/anastasiabernat/Desktop/git_repositories/extreme-flight-trials/py_example_kit" # input the path to the Flight_scripts directory here 
 path = main_path + "/standardized_files/"
 
-arm_radius = # input the radius length of the fligh mill radius arm here
+arm_radius = 0.10 # input the radius length of the fligh mill radius arm here
 flight_path = 2 * 3.1415 * arm_radius
 
 # SI units
-distance_units = # identify SI distance units as a string here (e.g. 'm', 'cm', 'mm')
-time_units = # identify SI time units as a string here (e.g. 's', 'min', 'hrs')
+distance_units = "m" # identify SI distance units as a string here (e.g. 'm', 'cm', 'mm')
+time_units = "s" # identify SI time units as a string here (e.g. 's', 'min', 'hrs')
 speed_units = distance_units + '/' + time_units
 
 print(path, "\n")

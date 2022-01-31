@@ -52,8 +52,8 @@ def define_dicts(datapath):
         for row in reader:
             if row['died?'] == 'Y':
                 continue
-            
-            ID = int(row['ID'])
+
+            ID = (int(row['ID']))
             set_num = row['set_number'] 
             channel_letter = row['chamber'].split("-")[0] 
             channel_num = row['chamber'].split("-")[-1] 
@@ -65,7 +65,7 @@ def define_dicts(datapath):
                 current_flight_dict[(set_num, channel_letter, ID)] = channel_num
             else:
                 print('PROBLEM, BUG %s SHOWS UP AGAIN'%ID)
-                
+
     return (first_flight_dict, current_flight_dict)
 
 def map_IDs(path, outpath):
@@ -161,10 +161,10 @@ def map_IDs(path, outpath):
 
                 if before_first_event:
 
-                    current_bugs = {'channel1': first_flight_dict[(set_num,channel_letter,'1')],
-                                    'channel2': first_flight_dict[(set_num,channel_letter,'2')],
-                                    'channel3': first_flight_dict[(set_num,channel_letter,'3')],
-                                    'channel4': first_flight_dict[(set_num,channel_letter,'4')]}
+                    current_bugs = {'channel1': first_flight_dict[(set_number,channel_letter,'1')],
+                                    'channel2': first_flight_dict[(set_number,channel_letter,'2')],
+                                    'channel3': first_flight_dict[(set_number,channel_letter,'3')],
+                                    'channel4': first_flight_dict[(set_number,channel_letter,'4')]}
 
                     before_first_event = False
 
@@ -172,7 +172,7 @@ def map_IDs(path, outpath):
                     if row["event_marker"] == '' or row["event_marker"] == None:
                         continue
                     new_bug = int(re.search(r'\d+', row['event_marker']).group())
-                    new_channel = current_flight_dict[(set_num, channel_letter, new_bug)]
+                    new_channel = current_flight_dict[(set_number, channel_letter, new_bug)]
 
                     event_number = int(row['event_num']) - 1  # removes false first event marker count
                     new_row['event_num'] = event_number
@@ -263,16 +263,16 @@ def split_files(path, outpath):
 #   Write file main path down below. An example path is r"/Users/username/Desktop/Flight_scripts/".
 #*****************************************************************************************************
 
-main_path = # input the path to the Flight_scripts directory here 
+main_path = "/Users/anastasiabernat/Desktop/git_repositories/extreme-flight-trials/py_example_kit/" # input the path to the Flight_scripts directory here 
 
 # Defining dictionaries:
-datafile = main_path + "data/datasheet.csv"
+datafile = main_path + "data/datasheet-Winter.csv"
 first_flight_dict, current_flight_dict = define_dicts(datafile)
 
 # Mapping event marker IDs:
-txt_inpath = main_path + "recordings/"
-txt_outpath = main_path + "files2split/"
-map_IDs(txt_inpath, txt_outpath) 
+#txt_inpath = main_path + "recordings/"
+#txt_outpath = main_path + "files2split/"
+#map_IDs(txt_inpath, txt_outpath) 
 
 # Splitting files by ID:
 split_inpath = main_path + "files2split/"

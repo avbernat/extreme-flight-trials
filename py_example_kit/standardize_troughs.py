@@ -155,8 +155,8 @@ def write_to_file(outpath, file_name, lines, time_col, trough_col):
 #   the script needs to be edited accordingly.
 #************************************************************************************************************
 
-sampling_freq = # Hz
-main_path = # input the path to the Flight_scripts directory here 
+sampling_freq = 100 # Hz
+main_path = "/Users/anastasiabernat/Desktop/git_repositories/extreme-flight-trials/py_example_kit/" # input the path to the Flight_scripts directory here 
 path = main_path + "split_files/"
 dir_list = sorted(os.listdir(path))
 
@@ -168,7 +168,8 @@ print("Files in '", path, "' :")
 
 file_num = 0
 for file in dir_list:
-    
+    if file.startswith("."):
+        continue
     print("\n", file)
     filepath = path + str(file)
     InputFile = open(filepath, mode="r", encoding='latin-1')
