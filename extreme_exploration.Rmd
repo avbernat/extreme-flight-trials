@@ -1,0 +1,187 @@
+---
+title: "Extreme Flight Trial Analyses"
+author: "Anastasia Bernat"
+date: "11/11/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+rm(list=ls())
+
+dir_extreme = "~/Desktop/git_repositories/extreme-flight-trials"
+setwd(dir_extreme)
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+
+```{r}
+datapath = paste0(dir_extreme, "/data/exflight-trial-data.csv")
+data = read.csv(datapath)
+
+data = data[data$ID != "ID",]
+data = data[data$died. != "Y" & data$died !="?",]
+data = data[data$chamber != "",]
+
+datapath = paste0(dir_extreme, "/data/egg_tube_data.csv")
+df_labage = read.csv(datapath)
+
+datapath = paste0(dir_extreme, "/data/masterlist.csv")
+df_mage = read.csv(datapath)
+
+data
+```
+
+```{r}
+data$flew_b[data$flew=="Y"] = 1
+data$flew_b[data$flew=="N"] = -1
+data[data$pop == "L",]$pop = "KL"
+```
+
+```{r}
+df = aggregate(flew_b~temp, data=data, FUN=mean)
+df
+df = aggregate(flew_b~temp*pop, data=data, FUN=mean)
+kl = df[df$pop == "KL",]
+pk = df[df$pop == "PK",]
+kl$flew_pk = pk$flew_b
+kl
+plot(kl$temp, kl$flew_b, ylim=c(0,1))
+points(pk$temp, pk$flew_b, col="red") # generally flies less at colder temps and flies more at hotter temps
+```
+```{r}
+data$flew_b = as.factor(data$flew_b)
+```
+
+```{r}
+summary(glm(flew_b ~ pop, data=data, family = binomial)) # no difference between populations
+summary(glm(flew_b ~ chamber, data=data, family = binomial)) # no difference between chambers
+summary(glm(flew_b ~ set_number, data=data, family = binomial)) # set 14
+data$mass = as.numeric(data$mass)
+data$temp = as.numeric(data$temp)
+```
+
+```{r}
+summary(glm(flew_b ~ mass, data=data, family = binomial)) # yup mass matters A LOT
+summary(glm(flew_b ~ temp, data=data, family = binomial)) # temp does not matter for flight probably...
+```
+
+```{r}
+data$temp = as.numeric(data$temp)
+
+ggplot(data, aes(x=temp, fill=flew)) +
+  geom_histogram(bins=20) 
+```
+
+
+```{r}
+times2decimals = function(times) {
+  decimals = sapply(strsplit(times,":"),
+  function(x) {
+    x <- as.numeric(x)
+    x[1]+x[2]/60
+    }
+)
+  return(decimals)
+}
+
+data$time_start_dec = times2decimals(as.character(data$time_start))
+data$time_end_dec = times2decimals(as.character(data$time_end))
+
+duration = data$time_end_dec - data$time_start_dec
+
+# add 24 hrs for the bugs that flew overnight 
+duration[duration<0] + 24
+overnight_i = which(duration<0)
+duration[overnight_i] = duration[overnight_i] + 24
+
+data$duration = duration
+
+summary(glm(duration ~ mass, data=data)) 
+summary(glm(duration ~ temp, data=data)) 
+```
+
+
+```{r}
+plot(data$temp, data$duration)
+
+
+contin = data %>%
+  filter(flight_type != "B", flew != "N")
+plot(contin$temp, contin$duration, xlab="temp (C)", ylab="duration (hrs)")
+
+# remove overnight flyers 
+d = data[data$duration < 15, ]
+plot(d$temp, d$duration)
+
+summary(glm(duration ~ temp, data=d)) 
+```
+
+I expected to see this shape.
+
+```{r}
+ggplot(contin, aes(x=duration, fill=flew)) +
+  geom_histogram(bins=30)  +
+  facet_grid(temp ~ ., scales = "free")
+```
+
+Flight dispersal is very plastic to hot temperatures. However, sensitive to cold temperatures. 
+
+
+
+```{r echo=FALSE}
+
+
+# T2 = data_tested[data_tested$trial_type == "T2",]
+# T2 = T2[T2$population == "Key Largo" | T2$population == "Plantation Key",]
+# # create the unique dataset
+# df = create_delta_data(data_tested, remove_bugs_tested_once = FALSE) 
+# d = T1
+# temp = d[d$population == "Key Largo" | d$population == "Plantation Key",]
+# temp$pop_b[temp$population == "Key Largo"] = 1
+# temp$pop_b[temp$population == "Plantation Key"] = 0
+# temp$host_plant_comp = as.factor("BV-field")
+# temp$host_plant_comp_b = 0 
+# temp$age = as.factor("variable")
+# temp$age_b = 0
+# temp$temp_comp = as.factor("variable")
+# temp$temp_b = 0
+# temp$RH_comp = as.factor("variable")
+# temp$RH_b = 0
+# temp$lab_raised = 0
+
+# unique(temp[temp$population == "Plantation Key", "latitude"])
+# unique(temp[temp$population == "Key Largo", "latitude"])
+# sym_zone = unique(data_tested[data_tested$population == "Homestead", "latitude"])
+
+
+# datapath = "/Users/anastasiabernat/Desktop/git_repositories/SBB-dispersal/avbernat/Dispersal/Winter_2020/stats/exflight-trial-data.csv"
+# datapath = "~/Desktop/git_repositories/extreme-flight-trials/data/exflight-trial-data.csv"
+# ex = read.csv(datapath)
+# dex = ex[ex$temp == 28 & ex$RH == 70 & ex$NOTES == "", ]
+# dex$flew_b[dex$flew == "Y"] = 1
+# dex$flew_b[dex$flew == "N"] = 0
+# dex$pop_b[dex$pop == "KL"] = 1
+# dex$pop_b[dex$pop == "PK"] = 0
+# dex$host_plant = as.factor("BV-lab")
+# dex$age = as.factor("similar")
+# dex$host_plant_comp_b = 1
+# dex$age_b = 1
+# dex$temp_b = 1
+# dex$RH_b = 1
+# 
+# dex$mass_c = as.numeric(dex$mass) - mean(as.numeric(dex$mass))
+# 
+# dex$lab_raised = 1
+# dex$latitude = 24.97357 # PK
+# dex$latitude[dex$pop == "KL"] = 25.12846
+# dex$lat_c<-dex$latitude-mean(dex$latitude)
+# dex$sym_dist<-abs(dex$latitude-sym_zone)
+# # dex$sym_dist = abs(dex$latitude-sym_zone)
+# dex$sym_dist_s = (dex$sym_dist - mean(dex$sym_dist)) / sd(dex$sym_dist)
+
+```
